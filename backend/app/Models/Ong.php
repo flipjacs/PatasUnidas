@@ -11,10 +11,25 @@ class Ong extends Model
 
     public $timestamps = false;
 
-    protected $guarded = ['id'];
+    protected $fillable = ['nome', 'cnpj_cpf', 'email', 'telefone', 'cidade', 'estado', 'status'];
 
     public function usuarios(): HasMany
     {
         return $this->hasMany(Usuario::class, 'ong_id');
+    }
+
+    public function animais(): HasMany
+    {
+        return $this->hasMany(Animal::class, 'ong_id');
+    }
+
+    public function solicitacoesAdocao(): HasMany
+    {
+        return $this->hasMany(AdoptionRequest::class, 'ong_id');
+    }
+
+    public function doacoes(): HasMany
+    {
+        return $this->hasMany(Donation::class, 'ong_id');
     }
 }

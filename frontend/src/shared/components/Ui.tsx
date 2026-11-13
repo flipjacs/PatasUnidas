@@ -1,10 +1,16 @@
 import { useState, type InputHTMLAttributes, type ReactNode } from 'react'
-import { Link, NavLink } from 'react-router'
+import { Link, NavLink, useNavigate } from 'react-router'
+import { useAuth } from '../../features/auth/auth'
+import { errorMessage } from '../api/client'
 
 export function Paw() { return <svg viewBox="0 0 100 100" aria-hidden="true"><ellipse cx="14" cy="46" rx="10" ry="13.5" transform="rotate(-25 14 46)"/><ellipse cx="37" cy="22" rx="10.5" ry="14" transform="rotate(-8 37 22)"/><ellipse cx="63" cy="22" rx="10.5" ry="14" transform="rotate(8 63 22)"/><ellipse cx="86" cy="46" rx="10" ry="13.5" transform="rotate(25 86 46)"/><ellipse cx="50" cy="70" rx="28" ry="22"/></svg> }
 export function Brand() { return <div className="brand"><span className="brand-mark"><Paw /></span><span>Patas<br/>Unidas</span></div> }
 function NavigationLinks({ onSoon }: {onSoon:()=>void}) { return <><NavLink to="/" end>Início</NavLink><NavLink to="/animais">Animais</NavLink><button type="button" onClick={onSoon}>Apadrinhar</button></> }
-export function Header({ children, onSoon }: { children?: ReactNode; onSoon?:()=>void }) { return <header className="header"><div className="header-inner"><div className="header-content">{children ?? <Brand />}</div>{onSoon && <nav className="desktop-nav" aria-label="Navegação principal"><NavigationLinks onSoon={onSoon}/></nav>}</div></header> }
+export function Header({ children, onSoon }: { children?: ReactNode; onSoon?:()=>void }) {
+ const {logout} = useAuth(); const navigate = useNavigate(); const [busy,setBusy] = useState(false); const [error,setError] = useState('')
+ async function signOut() { if(busy) return; setBusy(true); setError(''); try { await logout(); navigate('/login',{replace:true}) } catch (cause) { setError(errorMessage(cause,'logout')) } finally { setBusy(false) } }
+ return <header className="header"><div className={`header-inner ${onSoon ? 'header-authenticated' : ''}`}><div className="header-content">{children ?? <Brand />}{onSoon && <button className="logout-button" type="button" onClick={signOut} disabled={busy}>{busy?'Saindo...':'Sair'}</button>}</div>{onSoon && <nav className="desktop-nav" aria-label="Navegação principal"><NavigationLinks onSoon={onSoon}/></nav>}</div>{error && <div className="header-feedback"><Notice>{error}</Notice></div>}</header>
+}
 export function Button({ children, secondary = false, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & {secondary?: boolean}) { return <button className={`button ${secondary ? 'button-outline' : ''}`} {...props}>{children}</button> }
 export function Field({ label, password, ...props }: InputHTMLAttributes<HTMLInputElement> & {label:string; password?:boolean}) { const [visible,setVisible] = useState(false); const id=props.id ?? props.name; return <div className="field"><label htmlFor={id}>{label}</label><span className="input-wrap"><input {...props} id={id} type={password ? (visible ? 'text' : 'password') : props.type} />{password && <button type="button" className="eye" aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={visible} onClick={()=>setVisible(!visible)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M2 12 Q12 1 22 12 Q12 23 2 12Z"/><circle cx="12" cy="12" r="2.5"/>{!visible && <path d="M3 21 21 3"/>}</svg></button>}</span></div> }
 export function BottomNav({ onSoon }: {onSoon:()=>void}) { return <nav className="bottom-nav" aria-label="Navegação principal"><div><NavigationLinks onSoon={onSoon}/></div></nav> }

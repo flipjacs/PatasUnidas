@@ -1,14 +1,64 @@
 <?php
 
+use App\Http\Controllers\AdoptionRequestController;
+use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\AnimalPhotoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\FuncionarioController;
+use App\Http\Controllers\PlatformOngController;
+use App\Http\Controllers\PrimeiroAcessoController;
+use App\Http\Controllers\PublicAnimalController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\EnsureActiveUser;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/usuarios/cadastro', [UsuarioController::class, 'publico']);
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::middleware(['auth:web', EnsureActiveUser::class])->group(function (): void {
-    Route::get('/auth/me', [AuthController::class, 'me']);
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::post('/usuarios/internos', [UsuarioController::class, 'interno']);
+Route::prefix('v1')->group(function (): void {
+    Route::post('/usuarios/cadastro', [UsuarioController::class, 'publico']);
+    Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/primeiro-acesso', [PrimeiroAcessoController::class, 'store']);
+    Route::get('/public/animais', [PublicAnimalController::class, 'index']);
+    Route::get('/public/animais/{animal}', [PublicAnimalController::class, 'show']);
+    Route::middleware(['auth:web', EnsureActiveUser::class])->group(function (): void {
+        Route::get('/auth/me', [AuthController::class, 'me']);
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::post('/usuarios/internos', [UsuarioController::class, 'interno']);
+        Route::post('/donations', [DonationController::class, 'store']);
+        Route::get('/me/donations', [DonationController::class, 'mine']);
+        Route::get('/ong/donations', [DonationController::class, 'index']);
+        Route::get('/ong/donations/{doacao}', [DonationController::class, 'show']);
+        Route::patch('/ong/donations/{doacao}/confirmar', [DonationController::class, 'confirm']);
+        Route::patch('/ong/donations/{doacao}/cancelar', [DonationController::class, 'cancel']);
+        Route::post('/adoption-requests', [AdoptionRequestController::class, 'store']);
+        Route::get('/me/adoption-requests', [AdoptionRequestController::class, 'mine']);
+        Route::patch('/me/adoption-requests/{solicitacao}/cancelar', [AdoptionRequestController::class, 'cancel']);
+        Route::get('/ong/adoption-requests', [AdoptionRequestController::class, 'index']);
+        Route::get('/ong/adoption-requests/{solicitacao}', [AdoptionRequestController::class, 'show']);
+        Route::patch('/ong/adoption-requests/{solicitacao}/rejeitar', [AdoptionRequestController::class, 'reject']);
+        Route::patch('/ong/adoption-requests/{solicitacao}/aprovar', [AdoptionRequestController::class, 'approve']);
+        Route::patch('/ong/adoption-requests/{solicitacao}/cancelar-aprovacao', [AdoptionRequestController::class, 'cancelApproval']);
+        Route::post('/ong/adoption-requests/{solicitacao}/confirmar-entrega', [AdoptionRequestController::class, 'confirmDelivery']);
+        Route::get('/ong/animais', [AnimalController::class, 'index']);
+        Route::post('/ong/animais', [AnimalController::class, 'store']);
+        Route::get('/ong/animais/{animal}', [AnimalController::class, 'show']);
+        Route::patch('/ong/animais/{animal}', [AnimalController::class, 'update']);
+        Route::patch('/ong/animais/{animal}/situacao', [AnimalController::class, 'situacao']);
+        Route::patch('/ong/animais/{animal}/publicar', [AnimalController::class, 'publicar']);
+        Route::patch('/ong/animais/{animal}/despublicar', [AnimalController::class, 'despublicar']);
+        Route::get('/ong/animais/{animal}/fotos', [AnimalPhotoController::class, 'index']);
+        Route::post('/ong/animais/{animal}/fotos', [AnimalPhotoController::class, 'store']);
+        Route::patch('/ong/animais/{animal}/fotos/{foto}/principal', [AnimalPhotoController::class, 'principal']);
+        Route::delete('/ong/animais/{animal}/fotos/{foto}', [AnimalPhotoController::class, 'destroy']);
+        Route::get('/ong/funcionarios', [FuncionarioController::class, 'index']);
+        Route::get('/ong/funcionarios/{usuario}', [FuncionarioController::class, 'show']);
+        Route::patch('/ong/funcionarios/{usuario}/ativar', [FuncionarioController::class, 'ativar']);
+        Route::patch('/ong/funcionarios/{usuario}/desativar', [FuncionarioController::class, 'desativar']);
+        Route::get('/platform/ongs', [PlatformOngController::class, 'index']);
+        Route::post('/platform/ongs', [PlatformOngController::class, 'store']);
+        Route::get('/platform/ongs/{ong}', [PlatformOngController::class, 'show']);
+        Route::patch('/platform/ongs/{ong}', [PlatformOngController::class, 'update']);
+        Route::patch('/platform/ongs/{ong}/suspender', [PlatformOngController::class, 'suspender']);
+        Route::patch('/platform/ongs/{ong}/reativar', [PlatformOngController::class, 'reativar']);
+        Route::post('/platform/ongs/{ong}/administradores', [PlatformOngController::class, 'primeiroAdministrador']);
+    });
 });

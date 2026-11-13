@@ -15,6 +15,6 @@ class CadastroInternoRequest extends CadastroRequest
 
     public function rules(): array
     {
-        return [...$this->commonRules(), 'perfil' => ['required', Rule::in(['ADMINISTRADOR', 'VOLUNTARIO', 'VETERINARIO'])]];
+        return [...$this->commonRules(), 'perfil' => ['required', Rule::in(['VOLUNTARIO', 'VETERINARIO'])]];
     }
 }

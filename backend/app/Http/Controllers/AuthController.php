@@ -25,10 +25,12 @@ class AuthController extends Controller
         }
         if (! Auth::guard('web')->attempt(['email' => $email, 'password' => $data['senha'], 'ativo' => true])) {
             RateLimiter::hit($key, 60);
+
             return response()->json(['message' => 'Credenciais inválidas.'], 401);
         }
         RateLimiter::clear($key);
         $request->session()->regenerate();
+
         return (new UsuarioResource($request->user()))->response();
     }
 
@@ -42,6 +44,7 @@ class AuthController extends Controller
         Auth::guard('web')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return response()->json(['message' => 'Sessão encerrada.']);
     }
 }

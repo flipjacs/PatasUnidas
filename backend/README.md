@@ -1,58 +1,61 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API Patas Unidas Web
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A API usa MySQL próprio e autenticação de SPA por sessão Laravel com middleware stateful do Sanctum. O aplicativo React utiliza os endpoints de autenticação. Perfis no banco são armazenados em minúsculas e apresentados em maiúsculas na API.
 
-## About Laravel
+## Iniciar localmente
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Na raiz do projeto, configure `.env` e `backend/.env` a partir dos respectivos `.env.example` e mantenha as credenciais MySQL iguais. Depois execute:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```sh
+docker compose up -d --wait
+cd backend
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan serve --host=127.0.0.1 --port=8001
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+`key:generate` é necessário apenas em uma instalação nova: não regenere a chave de um ambiente existente sem planejar o impacto sobre cookies e dados criptografados. O MySQL padrão deste projeto usa `127.0.0.1:3309` e `patas_unidas_web`; confira as variáveis antes de executar migrations. Não use as credenciais de exemplo em produção.
 
-## Contributing
+## Endpoints
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- `GET /sanctum/csrf-cookie`: inicializa a sessão e o cookie CSRF.
+- `POST /api/v1/usuarios/cadastro`: recebe `nome`, `email` e `senha`; cria somente `USUARIO` sem ONG.
+- `POST /api/v1/auth/login`: recebe `email` e `senha`; devolve o usuário e cria uma sessão por cookie.
+- `GET /api/v1/auth/me`: devolve o usuário da sessão.
+- `POST /api/v1/auth/logout`: encerra a sessão.
+- `POST /api/v1/usuarios/internos`: administrador ativo com ONG informa `nome`, `email`, `senha` e `perfil` (`VOLUNTARIO` ou `VETERINARIO`); a ONG vem da sessão.
 
-## Code of Conduct
+Erros de validação retornam 400, e-mail duplicado 409, credenciais incorretas 401, permissão insuficiente 403 e excesso de tentativas 429. A senha deve ter 8 a 72 caracteres e no máximo 72 bytes, limite do BCrypt. Nenhuma resposta contém o hash.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Para uma SPA, use o mesmo hostname para frontend e API (por exemplo, `127.0.0.1` em ambos). Configure as origens em `SANCTUM_STATEFUL_DOMAINS` e `CORS_ALLOWED_ORIGINS`, incluindo portas. Envie `Accept: application/json`, `Origin` ou `Referer` da SPA, e credenciais em todas as requisições. Primeiro obtenha `/sanctum/csrf-cookie`; leia e decodifique o cookie `XSRF-TOKEN` e envie-o no cabeçalho `X-XSRF-TOKEN` para requisições que alterem dados. O cookie de sessão é HTTP-only; use HTTPS e `SESSION_SECURE_COOKIE=true` em produção, com `APP_DEBUG=false` e origens explícitas. Não armazene tokens em localStorage.
 
-## Security Vulnerabilities
+## Testes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```sh
+php artisan test
+```
 
-## License
+O PHPUnit usa SQLite em memória, isolado do MySQL de desenvolvimento.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Primeiro administrador e funcionários
+
+O criador cadastra a ONG e cria seu primeiro administrador em `POST /api/v1/platform/ongs/{ong}/administradores`, enviando somente `nome` e `email`. A conta nasce inativa e a ONG permanece suspensa. No terminal administrativo local, execute `php artisan patas-unidas:convite-admin {id-do-usuario}` e entregue o token diretamente ao administrador; não o registre em arquivos ou mensagens públicas. O token é armazenado com hash na tabela padrão `password_reset_tokens` e expira conforme `config/auth.php`.
+
+O administrador define a própria senha enviando `email`, `token` e `senha` para `POST /api/v1/auth/primeiro-acesso`. Após isso, o criador pode reativar a ONG. Administradores de ONGs ativas consultam e ativam/desativam voluntários e veterinários por `/api/v1/ong/funcionarios`.
+
+## Animais internos
+
+Administradores e voluntários de ONGs ativas usam `/api/v1/ong/animais` para cadastrar, listar, consultar e atualizar os animais da própria organização. `idade_aproximada` é armazenada em **meses** (de 0 a 1200). O cadastro define `situacao` como `DISPONIVEL`; `PATCH /api/v1/ong/animais/{animal}/situacao` permite apenas as transições administrativas entre `DISPONIVEL`, `INDISPONIVEL` e `FALECIDO`. Estados de adoção serão tratados no módulo próprio.
+
+## Fotografias e catálogo público
+
+`PATCH /api/v1/ong/animais/{animal}/publicar` e `/despublicar` controlam `publicado` sem mudar a situação. Fotografias são enviadas individualmente para `POST /api/v1/ong/animais/{animal}/fotos` no campo `foto`: JPEG, PNG ou WebP, até 5 MB e oito arquivos por animal. A primeira foto é principal; os endpoints `/fotos`, `/fotos/{foto}/principal` e `/fotos/{foto}` permitem listar, escolher a principal e remover. O disco `public` guarda os arquivos em `animais/{id}`; em uma instalação nova, execute `php artisan storage:link` para servir as URLs retornadas pela API.
+
+`GET /api/v1/public/animais` e `GET /api/v1/public/animais/{animal}` não exigem sessão. O catálogo mostra somente animais publicados, disponíveis e de ONGs ativas. Aceita filtros por `especie`, `sexo`, `porte`, `ongId`, `cidade` e `estado`, com paginação de 15 registros.
+
+## Solicitações de adoção
+
+Um `USUARIO` autenticado cria uma solicitação em `POST /api/v1/adoption-requests`, enviando `animalId` e, opcionalmente, `mensagem`. O animal precisa estar publicado, disponível e vinculado a ONG ativa. A solicitação começa `PENDENTE` e não altera a situação do animal. O usuário lista e cancela suas pendências em `/api/v1/me/adoption-requests`.
+
+Administradores e voluntários de ONG ativa listam, consultam e rejeitam solicitações da própria ONG em `/api/v1/ong/adoption-requests`. A rejeição exige `justificativa` e registra responsável e data. Listagens usam paginação de 15; aprovação, reserva e conclusão pertencem à fase seguinte.

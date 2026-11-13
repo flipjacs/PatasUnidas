@@ -25,7 +25,7 @@ abstract class CadastroRequest extends FormRequest
         return [
             'nome' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:120'],
-            'senha' => ['required', 'string', 'min:12', 'max:72', function (string $attribute, mixed $value, \Closure $fail): void {
+            'senha' => ['required', 'string', 'min:8', 'max:72', function (string $attribute, mixed $value, \Closure $fail): void {
                 if (is_string($value) && (strlen($value) > 72 || trim($value) === '')) {
                     $fail('A senha é inválida ou excede 72 bytes.');
                 }

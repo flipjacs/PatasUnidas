@@ -162,3 +162,12 @@ h1,h2,h3,.brand { font-family:Georgia,'Times New Roman',serif}
 @media (min-width: 1024px) {
   .auth-body { max-width: 488px; }
 }
+
+/* Estados de sessão e saída */
+.auth-state { max-width: 488px; margin: 24px auto; padding: 0 24px; }
+.auth-state .button { margin-top: 16px; }
+.header-authenticated .header-content { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex: 1; }
+.logout-button { min-height: 44px; padding: 8px 12px; border: 1px solid rgba(255,255,255,.55); border-radius: 12px; color: #fff; background: transparent; font-size: 14px; }
+.logout-button:hover { background: rgba(255,255,255,.1); }
+.header-feedback { max-width: 1120px; margin: auto; padding: 0 24px 12px; }
+.header-feedback .notice { margin: 0; }

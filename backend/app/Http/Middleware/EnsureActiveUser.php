@@ -17,6 +17,7 @@ class EnsureActiveUser
             $request->session()->regenerateToken();
             abort(401, 'Sessão indisponível.');
         }
+
         return $next($request);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Usuario extends Authenticatable
@@ -28,5 +29,15 @@ class Usuario extends Authenticatable
     public function ong(): BelongsTo
     {
         return $this->belongsTo(Ong::class, 'ong_id');
+    }
+
+    public function solicitacoesAdocao(): HasMany
+    {
+        return $this->hasMany(AdoptionRequest::class, 'usuario_id');
+    }
+
+    public function doacoes(): HasMany
+    {
+        return $this->hasMany(Donation::class, 'usuario_id');
     }
 }

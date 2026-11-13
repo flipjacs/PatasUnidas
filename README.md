@@ -1,11 +1,11 @@
 # Patas Unidas Web
 
-Base independente para a futura versão web do Patas Unidas. Ainda não há telas nem funcionalidades de cadastro ou autenticação.
+Versão web independente do Patas Unidas. O frontend usa a API Laravel para cadastro e autenticação por sessão; os dados de animais permanecem demonstrativos.
 
 ## Organização
 
 - `frontend/`: React, TypeScript e Vite; `src/features` para funcionalidades e `src/shared` para componentes e integração REST. `src/app` contém a composição da aplicação; `src/styles` centraliza estilos.
-- `backend/`: Laravel convencional, com rotas REST preparadas em `routes/api.php`. Controllers, Form Requests, models, middleware e policies devem seguir as convenções do Laravel; adicione services apenas quando necessários. Sanctum está instalado, mas fluxos de autenticação, middleware stateful e migração de tokens ainda não estão configurados.
+- `backend/`: Laravel com endpoints de usuários e sessão, Sanctum e MySQL isolado. A documentação do fluxo de autenticação está em `backend/README.md`.
 - `docker-compose.yml`: apenas MySQL local, com volume e rede próprios. PHP e Vite executam no host.
 
 ## Requisitos
@@ -43,7 +43,7 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
 ```
 
-Acesse `http://127.0.0.1:5174`. A API ficará em `http://127.0.0.1:8001/api`; `VITE_API_BASE_URL` é um ponto de configuração para futura integração REST. A página permanece vazia intencionalmente. O endpoint de saúde do Laravel é `http://127.0.0.1:8001/up`.
+Acesse `http://127.0.0.1:5174`. A API ficará em `http://127.0.0.1:8001/api`; `VITE_API_BASE_URL` configura o endereço da API. Use o mesmo hostname no frontend e na API para que os cookies de sessão e CSRF funcionem. O endpoint de saúde do Laravel é `http://127.0.0.1:8001/up`.
 
 O MySQL fica em `127.0.0.1:3309` por padrão, com banco e usuário próprios. A alteração de credenciais no `.env` do Compose após a criação do volume não altera usuários já inicializados no MySQL. Para parar sem apagar os dados: `docker compose down`. Não use as credenciais de exemplo em produção.
 
@@ -56,4 +56,4 @@ cd ../backend && php artisan test
 
 ## Pendências
 
-Definir contratos e funcionalidades a partir da referência Android em etapa futura; configurar CORS, cookies e autenticação Sanctum conforme o fluxo escolhido; implementar integração REST e telas. A estrutura inicial não usa o banco nem o código do projeto Android.
+Substituir as fotografias provisórias por imagens com licença confirmada. Provisionar a primeira ONG e o primeiro administrador por um processo administrativo seguro antes de usar o cadastro interno.
