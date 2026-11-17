@@ -65,6 +65,23 @@ class DonationController extends Controller
             ->orderByDesc('created_at')->orderByDesc('id')->paginate(15));
     }
 
+    public function cancelOwn(Request $request, int $doacao): OwnDonationResource
+    {
+        $donation = DB::transaction(function () use ($request, $doacao): Donation {
+            $donation = $this->own($request)->lockForUpdate()->findOrFail($doacao);
+            Gate::authorize('cancelOwn', $donation);
+            if ($donation->status !== 'PENDENTE' || FinancialTransaction::query()
+                ->where('origem_tipo', 'DOACAO')->where('origem_id', $donation->id)->exists()) {
+                throw new HttpException(409, 'Esta doação não pode ser cancelada.');
+            }
+            $donation->update(['status' => 'CANCELADA', 'cancelado_em' => now(), 'cancelado_por' => $request->user()->id]);
+
+            return $donation;
+        });
+
+        return new OwnDonationResource($donation->load('ong:id,nome'));
+    }
+
     public function index(Request $request): AnonymousResourceCollection
     {
         $filters = $request->validate([

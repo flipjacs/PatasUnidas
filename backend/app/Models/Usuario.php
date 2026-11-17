@@ -40,4 +40,19 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Donation::class, 'usuario_id');
     }
+
+    public function prontuariosRegistrados(): HasMany
+    {
+        return $this->hasMany(MedicalRecord::class, 'registrado_por');
+    }
+
+    public function correcoesClinicas(): HasMany
+    {
+        return $this->hasMany(MedicalRecordCorrection::class, 'corrigido_por');
+    }
+
+    public function apadrinhamentos(): HasMany
+    {
+        return $this->hasMany(Sponsorship::class, 'usuario_id');
+    }
 }

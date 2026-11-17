@@ -19,7 +19,7 @@ class AnimalPublicationTest extends TestCase
     {
         parent::setUp();
         $this->withHeader('Origin', 'http://127.0.0.1:5174');
-        Storage::fake('public');
+        Storage::fake('local');
     }
 
     private function ong(string $status = 'ATIVA', string $cidade = 'Manaus'): Ong
@@ -99,7 +99,7 @@ class AnimalPublicationTest extends TestCase
         $this->post("/api/v1/ong/animais/{$animal->id}/fotos", ['foto' => $this->image()], ['Accept' => 'application/json'])
             ->assertCreated()->assertJsonPath('principal', true);
         $first = $animal->fotos()->firstOrFail();
-        Storage::disk('public')->assertExists($first->caminho);
+        Storage::disk('local')->assertExists($first->caminho);
         $this->post("/api/v1/ong/animais/{$animal->id}/fotos", ['foto' => $this->image()], ['Accept' => 'application/json'])
             ->assertCreated()->assertJsonPath('principal', false);
         $second = $animal->fotos()->orderByDesc('id')->firstOrFail();
@@ -107,7 +107,7 @@ class AnimalPublicationTest extends TestCase
             ->assertOk()->assertJsonPath('principal', true);
         $this->assertFalse($first->fresh()->principal);
         $this->deleteJson("/api/v1/ong/animais/{$animal->id}/fotos/{$second->id}")->assertOk();
-        Storage::disk('public')->assertMissing($second->caminho);
+        Storage::disk('local')->assertMissing($second->caminho);
         $this->assertTrue($first->fresh()->principal);
         $this->getJson("/api/v1/ong/animais/{$animal->id}/fotos")->assertOk()->assertJsonCount(1, 'data');
     }

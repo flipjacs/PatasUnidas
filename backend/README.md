@@ -50,7 +50,9 @@ Administradores e voluntários de ONGs ativas usam `/api/v1/ong/animais` para ca
 
 ## Fotografias e catálogo público
 
-`PATCH /api/v1/ong/animais/{animal}/publicar` e `/despublicar` controlam `publicado` sem mudar a situação. Fotografias são enviadas individualmente para `POST /api/v1/ong/animais/{animal}/fotos` no campo `foto`: JPEG, PNG ou WebP, até 5 MB e oito arquivos por animal. A primeira foto é principal; os endpoints `/fotos`, `/fotos/{foto}/principal` e `/fotos/{foto}` permitem listar, escolher a principal e remover. O disco `public` guarda os arquivos em `animais/{id}`; em uma instalação nova, execute `php artisan storage:link` para servir as URLs retornadas pela API.
+`PATCH /api/v1/ong/animais/{animal}/publicar` e `/despublicar` controlam `publicado` sem mudar a situação. Fotografias são enviadas individualmente para `POST /api/v1/ong/animais/{animal}/fotos` no campo `foto`: JPEG, PNG ou WebP, até 5 MB e oito arquivos por animal. A primeira foto é principal; os endpoints `/fotos`, `/fotos/{foto}/principal` e `/fotos/{foto}` permitem listar, escolher a principal e remover. Os arquivos ficam no disco privado `local`, em `animais/{id}`. A API devolve URLs diferentes para acesso público (`/api/v1/public/animais/{animal}/fotos/{foto}/arquivo`) e interno autenticado (`/api/v1/ong/animais/{animal}/fotos/{foto}/arquivo`). A URL pública só entrega a imagem enquanto o animal estiver publicado, disponível e vinculado a ONG ativa; respostas de arquivo não são armazenadas em cache.
+
+Em ambientes que já tinham fotos no disco público, confirme banco e arquivos e execute `php artisan patas-unidas:migrar-fotos-privadas` antes de disponibilizar a nova versão. O comando compara hashes, preserva IDs e metadados, retira cada cópia pública somente após conferir a privada e pode ser executado novamente. Conflitos, arquivos ausentes ou órfãos exigem revisão manual. O link simbólico global `public/storage` pode permanecer, mas fotos de animais não devem ficar no disco público.
 
 `GET /api/v1/public/animais` e `GET /api/v1/public/animais/{animal}` não exigem sessão. O catálogo mostra somente animais publicados, disponíveis e de ONGs ativas. Aceita filtros por `especie`, `sexo`, `porte`, `ongId`, `cidade` e `estado`, com paginação de 15 registros.
 
@@ -59,3 +61,9 @@ Administradores e voluntários de ONGs ativas usam `/api/v1/ong/animais` para ca
 Um `USUARIO` autenticado cria uma solicitação em `POST /api/v1/adoption-requests`, enviando `animalId` e, opcionalmente, `mensagem`. O animal precisa estar publicado, disponível e vinculado a ONG ativa. A solicitação começa `PENDENTE` e não altera a situação do animal. O usuário lista e cancela suas pendências em `/api/v1/me/adoption-requests`.
 
 Administradores e voluntários de ONG ativa listam, consultam e rejeitam solicitações da própria ONG em `/api/v1/ong/adoption-requests`. A rejeição exige `justificativa` e registra responsável e data. Listagens usam paginação de 15; aprovação, reserva e conclusão pertencem à fase seguinte.
+
+## Financeiro interno
+
+`POST /api/v1/ong/finance/movimentacoes` recebe `tipo`, `categoria`, `descricao` e `valor` como string decimal (por exemplo, `"125.50"`). Administradores e voluntários de ONG ativa criam lançamentos manuais `PENDENTE`. Somente administradores aprovam despesas em `/{id}/aprovar`, confirmam seu pagamento em `/{id}/confirmar-pagamento`, confirmam receitas manuais em `/{id}/confirmar-recebimento` e cancelam lançamentos manuais ainda não realizados em `/{id}/cancelar`. Receitas automáticas de doações continuam sob o fluxo próprio de confirmação da doação.
+
+`GET /api/v1/ong/finance/movimentacoes` lista 15 registros por página e filtra por `tipo`, `status`, `categoria`, `de` e `ate` (`YYYY-MM-DD`). Na listagem, o período usa a data de criação. `GET /api/v1/ong/finance/resumo` aceita `de` e `ate`, inclusive nas duas extremidades: usa `confirmado_em` para valores realizados, `created_at` para pendentes e `aprovado_em` para despesas aprovadas ainda não pagas. O saldo é receitas realizadas menos despesas realizadas. Valores são retornados como strings com duas casas decimais.

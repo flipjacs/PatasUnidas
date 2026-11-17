@@ -33,4 +33,9 @@ class DonationPolicy
     {
         return $this->confirm($user, $donation);
     }
+
+    public function cancelOwn(Usuario $user, Donation $donation): bool
+    {
+        return $this->viewOwn($user) && $donation->usuario_id === $user->id;
+    }
 }

@@ -31,12 +31,12 @@ class AuthController extends Controller
         RateLimiter::clear($key);
         $request->session()->regenerate();
 
-        return (new UsuarioResource($request->user()))->response();
+        return (new UsuarioResource($request->user()->loadMissing('ong:id,nome,status')))->response();
     }
 
     public function me(Request $request): UsuarioResource
     {
-        return new UsuarioResource($request->user());
+        return new UsuarioResource($request->user()->loadMissing('ong:id,nome,status'));
     }
 
     public function logout(Request $request): JsonResponse

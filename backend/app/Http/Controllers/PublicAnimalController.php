@@ -11,12 +11,6 @@ use Illuminate\Validation\Rule;
 
 class PublicAnimalController extends Controller
 {
-    private function eligible(): Builder
-    {
-        return Animal::query()->where('publicado', true)->where('situacao', 'DISPONIVEL')
-            ->whereHas('ong', fn (Builder $query) => $query->where('status', 'ATIVA'));
-    }
-
     public function index(Request $request): AnonymousResourceCollection
     {
         $filters = $request->validate([
@@ -27,7 +21,7 @@ class PublicAnimalController extends Controller
             'cidade' => ['sometimes', 'string', 'max:80'],
             'estado' => ['sometimes', 'string', 'size:2'],
         ]);
-        $query = $this->eligible()->with(['ong:id,nome,cidade,estado', 'fotoPrincipal']);
+        $query = Animal::query()->publiclyEligible()->with(['ong:id,nome,cidade,estado', 'fotoPrincipal']);
         foreach (['especie', 'sexo', 'porte'] as $field) {
             if (isset($filters[$field])) {
                 $query->where($field, $filters[$field]);
@@ -47,6 +41,7 @@ class PublicAnimalController extends Controller
 
     public function show(int $animal): PublicAnimalResource
     {
-        return new PublicAnimalResource($this->eligible()->with(['ong:id,nome,cidade,estado', 'fotoPrincipal', 'fotos'])->findOrFail($animal));
+        return new PublicAnimalResource(Animal::query()->publiclyEligible()
+            ->with(['ong:id,nome,cidade,estado', 'fotoPrincipal', 'fotos'])->findOrFail($animal));
     }
 }

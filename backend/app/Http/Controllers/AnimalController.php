@@ -6,10 +6,13 @@ use App\Http\Requests\AnimalRequest;
 use App\Http\Requests\SituacaoAnimalRequest;
 use App\Http\Resources\AnimalResource;
 use App\Models\Animal;
+use App\Services\SponsorshipClosureService;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -38,8 +41,14 @@ class AnimalController extends Controller
             'situacao' => ['sometimes', Rule::in(['DISPONIVEL', 'EM_PROCESSO_ADOCAO', 'ADOTADO', 'INDISPONIVEL', 'FALECIDO'])],
             'sexo' => ['sometimes', Rule::in(['MACHO', 'FEMEA', 'NAO_INFORMADO'])],
             'porte' => ['sometimes', Rule::in(['PEQUENO', 'MEDIO', 'GRANDE', 'NAO_INFORMADO'])],
+            'busca' => ['sometimes', 'string', 'min:2', 'max:100'],
         ]);
-        $query = $this->animais($request);
+        $query = $this->animais($request)->with('fotoPrincipal');
+        if (isset($filters['busca'])) {
+            $term = addcslashes(trim($filters['busca']), '%_\\');
+            $query->where('nome', 'like', '%'.$term.'%');
+            unset($filters['busca']);
+        }
         foreach ($filters as $field => $value) {
             $query->where($field, $value);
         }
@@ -76,19 +85,25 @@ class AnimalController extends Controller
 
     public function situacao(SituacaoAnimalRequest $request, int $animal): AnimalResource
     {
-        $record = $this->animal($request, $animal);
-        Gate::authorize('update', $record);
-        $current = $record->situacao;
         $next = $request->validated('situacao');
-        $allowed = match ($current) {
-            'DISPONIVEL' => ['INDISPONIVEL', 'FALECIDO'],
-            'INDISPONIVEL' => ['DISPONIVEL', 'FALECIDO'],
-            default => [],
-        };
-        if (! in_array($next, $allowed, true)) {
-            throw new HttpException(409, 'Transição de situação não permitida.');
-        }
-        $record->update(['situacao' => $next]);
+        $record = DB::transaction(function () use ($request, $animal, $next): Animal {
+            $record = $this->animais($request)->lockForUpdate()->findOrFail($animal);
+            Gate::authorize('update', $record);
+            $allowed = match ($record->situacao) {
+                'DISPONIVEL' => ['INDISPONIVEL', 'FALECIDO'],
+                'INDISPONIVEL' => ['DISPONIVEL', 'FALECIDO'],
+                default => [],
+            };
+            if (! in_array($next, $allowed, true)) {
+                throw new HttpException(409, 'Transição de situação não permitida.');
+            }
+            $record->update(['situacao' => $next]);
+            if ($next === 'FALECIDO') {
+                app(SponsorshipClosureService::class)->closeForAnimal($record, 'FALECIMENTO_ANIMAL', CarbonImmutable::now());
+            }
+
+            return $record;
+        });
 
         return new AnimalResource($record);
     }

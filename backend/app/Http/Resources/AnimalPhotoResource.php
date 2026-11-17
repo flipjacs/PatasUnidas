@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class AnimalPhotoResource extends JsonResource
 {
@@ -14,7 +13,9 @@ class AnimalPhotoResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'url' => Storage::disk('public')->url($this->caminho),
+            'url' => $request->routeIs('public.animais.*')
+                ? route('public.animais.fotos.arquivo', ['animal' => $this->animal_id, 'foto' => $this->id])
+                : route('ong.animais.fotos.arquivo', ['animal' => $this->animal_id, 'foto' => $this->id]),
             'principal' => $this->principal,
         ];
     }

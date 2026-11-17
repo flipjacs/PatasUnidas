@@ -1,0 +1,144 @@
+.institutional-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.75rem; }
+.institutional-heading h1 { color: var(--forest); font-size: 2rem; line-height: 1.15; }
+.institutional-heading p { max-width: 62ch; margin-top: .45rem; color: var(--muted); font-size: .93rem; }
+.institutional-heading-action { flex: none; }
+.institutional-back { min-height: 2.75rem; margin: -.65rem 0 .3rem -.65rem; padding: .65rem; display: inline-flex; align-items: center; border-radius: .55rem; color: var(--foliage); font-size: .86rem; font-weight: 750; }
+.institutional-back:hover, .institutional-row-link:hover, .institutional-section-head a:hover { color: var(--forest); text-decoration: underline; text-underline-offset: .2em; }
+.institutional-section { min-width: 0; padding: clamp(1.25rem, 2vw, 2rem); border: 1px solid var(--border); border-radius: 1rem; background: var(--paper); }
+.institutional-section + .institutional-section { margin-top: 1.25rem; }
+.institutional-section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.3rem; }
+.institutional-section-head h2 { color: var(--forest); font-size: 1.12rem; letter-spacing: -.025em; }
+.institutional-section-head a { color: var(--foliage); font-size: .83rem; font-weight: 750; }
+.institutional-section-head p { margin-top: .35rem; color: var(--muted); font-size: .82rem; }
+.institutional-metrics, .institutional-mini-metrics { margin: 0; display: grid; gap: .75rem; }
+.institutional-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.institutional-mini-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.institutional-metric { min-width: 0; min-height: 7rem; padding: 1.15rem; display: flex; flex-direction: column; justify-content: space-between; gap: .7rem; border-radius: .8rem; background: var(--soft); }
+.institutional-metric--emphasis { background: var(--forest); color: #fff; }
+.institutional-metric dt { font-size: .8rem; font-weight: 700; line-height: 1.4; }
+.institutional-metric dd { margin: 0; font-size: clamp(1.3rem, 2vw, 2rem); font-weight: 800; letter-spacing: -.05em; overflow-wrap: anywhere; }
+.institutional-dashboard-grid { margin-top: 1.25rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.institutional-period-note, .institutional-help { color: var(--muted); font-size: .82rem; line-height: 1.55; }
+.institutional-period-note { margin-top: 1rem; }
+.institutional-toolbar { margin-bottom: 1.25rem; padding: 1rem; display: flex; align-items: end; flex-wrap: wrap; gap: .8rem; border: 1px solid var(--border); border-radius: .85rem; background: var(--paper); }
+.institutional-toolbar > div, .institutional-field { min-width: 0; display: grid; gap: .45rem; }
+.institutional-toolbar label, .institutional-field label { color: var(--ink); font-size: .8rem; font-weight: 750; }
+.institutional-toolbar input, .institutional-toolbar select, .institutional-field input, .institutional-field select, .institutional-field textarea { min-width: 0; min-height: 2.8rem; padding: .65rem .8rem; border: 1px solid #c9d5c9; border-radius: .6rem; background: #fff; color: var(--ink); }
+.institutional-field textarea { width: 100%; resize: vertical; }
+.institutional-field-error { color: var(--error); font-size: .76rem; line-height: 1.4; }
+.institutional-field [aria-invalid="true"] { border-color: var(--error); }
+.institutional-toolbar input:focus-visible, .institutional-toolbar select:focus-visible, .institutional-field input:focus-visible, .institutional-field select:focus-visible, .institutional-field textarea:focus-visible { border-color: var(--foliage); }
+.institutional-toolbar .button { min-height: 2.8rem; padding-inline: 1rem; font-size: .82rem; }
+.institutional-clear { min-height: 2.8rem; padding: .55rem .7rem; border: 0; border-radius: .6rem; background: transparent; color: var(--foliage); font-size: .82rem; font-weight: 750; }
+.institutional-clear:hover { background: var(--soft); }
+.institutional-search > div { flex: 1 1 15rem; max-width: 24rem; }
+.institutional-search input { width: 100%; }
+.institutional-animal-cell { display: flex; align-items: center; gap: .8rem; min-width: 0; text-align: left; }
+.institutional-animal-cell .photo { width: 3.6rem; height: 3.6rem; flex: none; overflow: hidden; border-radius: .55rem; }
+.institutional-animal-cell .photo img { width: 100%; height: 100%; object-fit: cover; }
+.institutional-animal-cell .photo-placeholder { min-height: 0; padding: .15rem; gap: .1rem; font-size: .5rem; }
+.institutional-animal-cell .photo-placeholder svg { width: .85rem; height: .85rem; }
+.institutional-animal-cell .photo-placeholder span { font-size: .48rem; line-height: 1.1; }
+.institutional-animal-readonly { margin: 0; display: grid; gap: 1rem; }
+.institutional-animal-readonly dt { color: var(--muted); font-size: .78rem; }
+.institutional-animal-readonly dd { margin: .2rem 0 0; color: var(--ink); overflow-wrap: anywhere; }
+.institutional-detail-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.3rem; }
+.institutional-table-wrap { overflow: hidden; border: 1px solid var(--border); border-radius: .85rem; background: var(--paper); }
+.institutional-table .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.institutional-table { width: 100%; border-collapse: collapse; text-align: left; font-size: .88rem; }
+.institutional-table th { padding: .9rem 1.2rem; color: var(--muted); background: #edf1eb; font-size: .73rem; font-weight: 800; }
+.institutional-table td { padding: 1rem 1.2rem; border-top: 1px solid var(--border); vertical-align: middle; }
+.institutional-table tbody tr:hover { background: #f4f7f2; }
+.institutional-table td strong, .institutional-table td small { display: block; }
+.institutional-table td strong { color: var(--forest); }
+.institutional-table td small { margin-top: .15rem; color: var(--muted); overflow-wrap: anywhere; }
+.institutional-row-link { color: var(--foliage); font-size: .82rem; font-weight: 800; white-space: nowrap; }
+.institutional-status { max-width: fit-content; padding: .36rem .65rem; display: inline-flex; align-items: center; border-radius: 999px; background: #edf0eb; color: #455a4a; font-size: .72rem; font-weight: 800; line-height: 1.25; }
+.institutional-status--disponivel, .institutional-status--ativo { background: #e3f1e5; color: #235c39; }
+.institutional-status--indisponivel, .institutional-status--inativo { background: #f5ebdd; color: #80542d; }
+.institutional-status--em_processo_adocao { background: #e6edf4; color: #355c79; }
+.institutional-status--falecido { background: #f2e6e3; color: #8c493d; }
+.institutional-status--pendente { background: #f5ebdd; color: #80542d; }
+.institutional-status--aprovada { background: #e6edf4; color: #355c79; }
+.institutional-status--rejeitada, .institutional-status--cancelada { background: #f2e6e3; color: #8c493d; }
+.institutional-status--concluida { background: #e3f1e5; color: #235c39; }
+.institutional-pager { margin-top: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--muted); font-size: .8rem; }
+.institutional-pager > div { display: flex; gap: .5rem; }
+.institutional-pager .button { min-height: 2.7rem; padding: .55rem .9rem; font-size: .8rem; }
+.institutional-empty { padding: 3rem 1.5rem; display: grid; justify-items: center; gap: .8rem; border: 1px solid var(--border); border-radius: .85rem; background: var(--paper); text-align: center; }
+.institutional-empty h2 { color: var(--forest); font-size: 1.25rem; }
+.institutional-empty p { max-width: 42ch; color: var(--muted); font-size: .88rem; }
+.institutional-loading { min-height: 18rem; padding: 1.5rem; display: grid; gap: .8rem; border-radius: .85rem; background: var(--paper); }
+.institutional-loading span { height: 2.5rem; border-radius: .5rem; background: #e9eee5; animation: institutional-pulse 1.2s ease-in-out infinite alternate; }
+.institutional-loading span:nth-child(2) { width: 74%; }.institutional-loading span:nth-child(3) { width: 48%; }
+.institutional-error, .institutional-feedback { margin-bottom: 1rem; display: grid; justify-items: start; gap: .75rem; }
+.institutional-form-panel { max-width: 55rem; }
+.institutional-form { display: grid; gap: 1.2rem; }
+.institutional-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.institutional-form-actions { margin-top: .35rem; }
+.institutional-check { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-size: .84rem; }
+.institutional-check input { width: 1.1rem; height: 1.1rem; accent-color: var(--forest); }
+.institutional-detail-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, .8fr); gap: 1.25rem; align-items: start; }
+.institutional-detail-side { display: grid; gap: 1.25rem; }
+.institutional-action-list { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .6rem; }
+.institutional-action-list .button, .institutional-detail-side .button { min-height: 2.8rem; padding: .55rem .85rem; font-size: .8rem; }
+.institutional-detail-side .institutional-help { margin-bottom: 1rem; }
+.institutional-photos { margin-top: 1.25rem; }
+.institutional-photo-grid { padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 1rem; list-style: none; }
+.institutional-photo-grid li { min-width: 0; overflow: hidden; border: 1px solid var(--border); border-radius: .7rem; }
+.institutional-photo-grid .photo { aspect-ratio: 4 / 3; }
+.institutional-photo-grid .photo img { width: 100%; height: 100%; object-fit: cover; }
+.institutional-photo-empty { max-width: 13rem; display: grid; gap: .6rem; }
+.institutional-photo-empty .photo { aspect-ratio: 4 / 3; border-radius: .7rem; overflow: hidden; }
+.institutional-photo-actions { padding: .8rem; display: grid; align-content: start; gap: .4rem; }
+.institutional-photo-actions span { color: var(--forest); font-size: .8rem; font-weight: 800; }
+.institutional-photo-actions button { min-height: 2.3rem; padding: .35rem .5rem; border: 0; border-radius: .4rem; background: var(--soft); color: var(--forest); font-size: .74rem; font-weight: 750; }
+.institutional-photo-actions button:hover { background: #dbe7d9; }
+.institutional-upload { margin-top: 1.2rem; }
+.institutional-upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.institutional-upload:focus-within label { outline: 3px solid var(--focus); outline-offset: 3px; }
+.institutional-employee-detail { max-width: 43rem; }
+.institutional-employee-detail dl { margin: 0 0 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.4rem; }
+.institutional-employee-detail dt { color: var(--muted); font-size: .75rem; }.institutional-employee-detail dd { margin: .2rem 0 0; color: var(--forest); font-size: .9rem; font-weight: 750; overflow-wrap: anywhere; }
+@keyframes institutional-pulse { to { opacity: .48; } }
+@media (max-width: 1050px) { .institutional-detail-grid { grid-template-columns: 1fr; } }
+@media (max-width: 760px) { .institutional-dashboard-grid { grid-template-columns: 1fr; }.institutional-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }.institutional-heading { align-items: start; flex-direction: column; }.institutional-heading-action { width: 100%; }.institutional-heading-action .button { width: 100%; } }
+@media (max-width: 640px) { .institutional-table-wrap { border: 0; background: transparent; }.institutional-table, .institutional-table tbody, .institutional-table tr, .institutional-table td { display: block; }.institutional-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }.institutional-table tbody { display: grid; gap: .8rem; }.institutional-table tr { padding: 1rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--paper); }.institutional-table td { padding: .35rem 0; border: 0; display: flex; justify-content: space-between; align-items: center; gap: .75rem; text-align: right; }.institutional-table td::before { content: attr(data-label); color: var(--muted); font-size: .75rem; font-weight: 750; text-align: left; }.institutional-table td:first-child { align-items: start; }.institutional-table td:first-child strong, .institutional-table td:first-child small { text-align: right; }.institutional-form-grid { grid-template-columns: 1fr; }.institutional-pager { align-items: start; flex-direction: column; }.institutional-employee-detail dl { grid-template-columns: 1fr; } }
+@media (min-width: 360px) and (max-width: 640px) { .institutional-filters > div { flex: 1 1 calc(50% - .5rem); }.institutional-filters select { width: 100%; } }
+@media (max-width: 400px) { .institutional-metrics, .institutional-mini-metrics { grid-template-columns: 1fr 1fr; }.institutional-metric { padding: .8rem; }.institutional-metric dd { font-size: 1.35rem; }.institutional-toolbar > div { flex: 1 1 100%; }.institutional-toolbar input, .institutional-toolbar select { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .institutional-loading span { animation: none; } }
+
+/* Adoções e prontuários usam a mesma superfície de trabalho das demais telas. */
+.institutional-muted { display: block; margin-top: .25rem; color: var(--muted); font-size: .76rem; }
+.institutional-inline-search { display: grid; gap: .35rem; }
+.institutional-inline-search label { color: var(--forest); font-size: .78rem; font-weight: 750; }
+.institutional-inline-search > div { display: flex; gap: .55rem; }
+.institutional-inline-search input { width: min(10rem, 100%); }
+.institutional-facts { display: grid; gap: 1rem; margin: 1.5rem 0 0; }
+.institutional-facts > div { padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.institutional-facts dt, .clinical-version dt { color: var(--muted); font-size: .76rem; font-weight: 750; }
+.institutional-facts dd, .clinical-version dd { margin: .3rem 0 0; color: var(--forest); overflow-wrap: anywhere; white-space: pre-wrap; }
+.institutional-facts a { color: var(--forest); text-underline-offset: .2em; }
+.institutional-history { margin-top: 1.5rem; }
+.institutional-history h3, .institutional-decision h3 { margin: 0 0 .7rem; color: var(--forest); font-size: 1rem; }
+.institutional-history p { margin: .5rem 0; color: var(--ink); line-height: 1.6; overflow-wrap: anywhere; }
+.institutional-decision { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.institutional-decision p { margin: 0 0 1rem; line-height: 1.6; }
+.institutional-checkbox { display: flex; align-items: flex-start; gap: .65rem; line-height: 1.5; color: var(--forest); font-weight: 700; }
+.institutional-checkbox input { flex: none; width: 1.15rem; height: 1.15rem; margin-top: .15rem; accent-color: var(--forest); }
+.institutional-adoption-photo { width: min(16rem, 100%); margin-top: 1rem; overflow: hidden; border-radius: .75rem; }
+.institutional-adoption-photo .photo { aspect-ratio: 4 / 3; }
+.institutional-adoption-photo img { width: 100%; height: 100%; object-fit: cover; }
+.clinical-history { display: grid; gap: .9rem; padding: 0; margin: 0; list-style: none; }
+.clinical-entry { max-width: 62rem; }
+.clinical-entry > div:first-child { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .7rem; }
+.clinical-entry time { color: var(--muted); font-size: .8rem; }
+.clinical-entry h2 { margin: .8rem 0 .5rem; color: var(--forest); font-size: 1.15rem; }
+.clinical-entry p, .clinical-description { max-width: 70ch; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.clinical-kind { display: inline-flex; align-items: center; padding: .25rem .65rem; border-radius: 99px; background: var(--soft); color: var(--forest); font-size: .75rem; font-weight: 800; }
+.clinical-versions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1.25rem; }
+.clinical-versions > div { min-width: 0; padding: 1rem; border: 1px solid var(--border); border-radius: .7rem; }
+.clinical-versions h3 { margin: 0 0 1rem; font-size: .9rem; color: var(--forest); }
+.clinical-version { display: grid; gap: .8rem; margin: 0; }
+.clinical-version dd { font-size: .85rem; line-height: 1.55; }
+@media (max-width: 640px) { .clinical-versions { grid-template-columns: 1fr; }.institutional-inline-search, .institutional-inline-search > div { width: 100%; }.institutional-inline-search input { flex: 1; min-width: 0; }.institutional-decision .institutional-form-actions { align-items: stretch; flex-direction: column; } }

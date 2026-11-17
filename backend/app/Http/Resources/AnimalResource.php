@@ -22,6 +22,7 @@ class AnimalResource extends JsonResource
             'descricao' => $this->descricao,
             'situacao' => $this->situacao,
             'publicado' => $this->publicado,
+            'fotoPrincipal' => $this->whenLoaded('fotoPrincipal', fn () => $this->fotoPrincipal ? new AnimalPhotoResource($this->fotoPrincipal) : null),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

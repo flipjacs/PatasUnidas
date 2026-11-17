@@ -32,4 +32,19 @@ class Ong extends Model
     {
         return $this->hasMany(Donation::class, 'ong_id');
     }
+
+    public function prontuarios(): HasMany
+    {
+        return $this->hasMany(MedicalRecord::class, 'ong_id');
+    }
+
+    public function apadrinhamentos(): HasMany
+    {
+        return $this->hasMany(Sponsorship::class, 'ong_id');
+    }
+
+    public function demonstrativos(): HasMany
+    {
+        return $this->hasMany(TransparencyReport::class, 'ong_id');
+    }
 }

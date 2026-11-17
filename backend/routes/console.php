@@ -1,15 +1,117 @@
 <?php
 
+use App\Models\AnimalPhoto;
 use App\Models\Usuario;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+Artisan::command('patas-unidas:migrar-fotos-privadas', function (): int {
+    $public = Storage::disk('public');
+    $private = Storage::disk('local');
+    $photos = AnimalPhoto::query()->orderBy('id')->get(['id', 'animal_id', 'caminho']);
+    $migrated = 0;
+    $alreadyPrivate = 0;
+    $removedPublic = 0;
+    $problems = 0;
+
+    foreach ($photos as $photo) {
+        $path = $photo->caminho;
+        if (! preg_match('~^animais/'.preg_quote((string) $photo->animal_id, '~').'/[A-Za-z0-9._-]+$~D', $path)) {
+            $this->error("Fotografia {$photo->id}: caminho inválido.");
+            $problems++;
+
+            continue;
+        }
+
+        $publicExists = $public->exists($path);
+        $privateExists = $private->exists($path);
+        if (! $publicExists && ! $privateExists) {
+            $this->error("Fotografia {$photo->id}: arquivo ausente nos dois discos.");
+            $problems++;
+
+            continue;
+        }
+        if (! $publicExists) {
+            $alreadyPrivate++;
+
+            continue;
+        }
+
+        $sourceHash = hash_file('sha256', $public->path($path));
+        if ($sourceHash === false) {
+            $this->error("Fotografia {$photo->id}: não foi possível verificar o arquivo público.");
+            $problems++;
+
+            continue;
+        }
+        if (! $privateExists) {
+            $temporaryPath = 'animais/.migracao/'.Str::uuid();
+            $stream = $public->readStream($path);
+            if ($stream === false) {
+                $this->error("Fotografia {$photo->id}: leitura do arquivo público falhou.");
+                $problems++;
+
+                continue;
+            }
+            try {
+                $copied = $private->writeStream($temporaryPath, $stream);
+            } finally {
+                fclose($stream);
+            }
+            if (! $copied || ! $private->exists($temporaryPath)
+                || hash_file('sha256', $private->path($temporaryPath)) !== $sourceHash) {
+                $private->delete($temporaryPath);
+                $this->error("Fotografia {$photo->id}: cópia privada não conferiu com a origem.");
+                $problems++;
+
+                continue;
+            }
+            if (! $private->move($temporaryPath, $path)) {
+                $private->delete($temporaryPath);
+                $this->error("Fotografia {$photo->id}: não foi possível concluir a cópia privada.");
+                $problems++;
+
+                continue;
+            }
+            $migrated++;
+        } elseif (hash_file('sha256', $private->path($path)) !== $sourceHash) {
+            $this->error("Fotografia {$photo->id}: arquivos público e privado divergem.");
+            $problems++;
+
+            continue;
+        } else {
+            $alreadyPrivate++;
+        }
+
+        if (! $public->delete($path)) {
+            $this->error("Fotografia {$photo->id}: arquivo público não pôde ser retirado.");
+            $problems++;
+
+            continue;
+        }
+        $removedPublic++;
+    }
+
+    $knownPaths = $photos->pluck('caminho')->all();
+    $orphanPaths = array_diff($public->allFiles('animais'), $knownPaths);
+    if ($orphanPaths !== []) {
+        $problems += count($orphanPaths);
+        $this->error('Há arquivos públicos de animais sem registro correspondente: '.count($orphanPaths).'. Revisão manual necessária.');
+    }
+
+    $this->info("Fotografias: {$photos->count()}; copiadas: {$migrated}; já privadas: {$alreadyPrivate}; origens públicas retiradas: {$removedPublic}; inconsistências: {$problems}.");
+
+    return $problems === 0 ? 0 : 1;
+})->purpose('Migra fotografias cadastradas para armazenamento privado sem sobrescrever conflitos');
 
 Artisan::command('patas-unidas:provisionar-criador', function (): int {
     if (Usuario::where('perfil', 'criador_plataforma')->exists()) {

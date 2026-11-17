@@ -10,6 +10,8 @@ use App\Http\Resources\OwnAdoptionRequestResource;
 use App\Models\Adoption;
 use App\Models\AdoptionRequest;
 use App\Models\Animal;
+use App\Services\SponsorshipClosureService;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -217,6 +219,7 @@ class AdoptionRequestController extends Controller
             ]);
             $record->update(['status' => 'CONCLUIDA']);
             $animal->update(['situacao' => 'ADOTADO']);
+            app(SponsorshipClosureService::class)->closeForAnimal($animal, 'ADOCAO_CONCLUIDA', CarbonImmutable::now());
             AdoptionRequest::query()->where('animal_id', $animal->id)->where('status', 'PENDENTE')->update([
                 'status' => 'REJEITADA',
                 'justificativa_rejeicao' => 'Animal adotado por outro solicitante.',

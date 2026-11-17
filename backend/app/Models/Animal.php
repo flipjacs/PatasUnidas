@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,12 @@ class Animal extends Model
     protected $table = 'animal';
 
     protected $fillable = ['ong_id', 'nome', 'especie', 'sexo', 'porte', 'idade_aproximada', 'descricao', 'situacao', 'publicado'];
+
+    public function scopePubliclyEligible(Builder $query): void
+    {
+        $query->where('publicado', true)->where('situacao', 'DISPONIVEL')
+            ->whereHas('ong', fn (Builder $ong) => $ong->where('status', 'ATIVA'));
+    }
 
     protected function casts(): array
     {
@@ -41,5 +48,15 @@ class Animal extends Model
     public function adocao(): HasOne
     {
         return $this->hasOne(Adoption::class, 'animal_id');
+    }
+
+    public function prontuarios(): HasMany
+    {
+        return $this->hasMany(MedicalRecord::class, 'animal_id');
+    }
+
+    public function apadrinhamentos(): HasMany
+    {
+        return $this->hasMany(Sponsorship::class, 'animal_id');
     }
 }

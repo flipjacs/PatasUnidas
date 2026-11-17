@@ -26,4 +26,15 @@ class OngPolicy
     {
         return $this->viewAny($user);
     }
+
+    public function viewDashboard(Usuario $user): bool
+    {
+        return $user->ativo && in_array($user->perfil, ['administrador', 'voluntario', 'veterinario'], true)
+            && $user->ong_id !== null && $user->ong()->where('status', 'ATIVA')->exists();
+    }
+
+    public function viewFinancialReport(Usuario $user): bool
+    {
+        return $user->perfil === 'administrador' && $this->viewDashboard($user);
+    }
 }

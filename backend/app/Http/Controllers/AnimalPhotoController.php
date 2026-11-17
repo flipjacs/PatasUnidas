@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AnimalPhotoController extends Controller
@@ -37,6 +38,35 @@ class AnimalPhotoController extends Controller
         return AnimalPhotoResource::collection($this->animal($request, $animal)->fotos()->orderBy('id')->get());
     }
 
+    private function file(AnimalPhoto $foto): StreamedResponse
+    {
+        $disk = Storage::disk('local');
+        abort_unless($disk->exists($foto->caminho), 404);
+        $mime = $disk->mimeType($foto->caminho);
+        abort_unless(in_array($mime, ['image/jpeg', 'image/png', 'image/webp'], true), 404);
+
+        return $disk->response($foto->caminho, null, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'private, no-store, max-age=0',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
+    public function publicFile(int $animal, int $foto): StreamedResponse
+    {
+        $record = Animal::query()->publiclyEligible()->findOrFail($animal);
+
+        return $this->file($this->foto($record, $foto));
+    }
+
+    public function internalFile(Request $request, int $animal, int $foto): StreamedResponse
+    {
+        $record = Animal::query()->where('ong_id', $request->user()->ong_id)->findOrFail($animal);
+        Gate::authorize('viewPhoto', $record);
+
+        return $this->file($this->foto($record, $foto));
+    }
+
     public function store(Request $request, int $animal): JsonResponse
     {
         $record = $this->animal($request, $animal);
@@ -54,7 +84,7 @@ class AnimalPhotoController extends Controller
                 if ($count >= 8) {
                     throw new HttpException(409, 'Limite de oito fotografias atingido.');
                 }
-                $path = $request->file('foto')->store("animais/{$record->id}", 'public');
+                $path = $request->file('foto')->store("animais/{$record->id}", 'local');
                 if (! $path) {
                     throw new HttpException(500, 'Não foi possível armazenar a fotografia.');
                 }
@@ -63,7 +93,7 @@ class AnimalPhotoController extends Controller
             });
         } catch (\Throwable $error) {
             if ($path) {
-                Storage::disk('public')->delete($path);
+                Storage::disk('local')->delete($path);
             }
             throw $error;
         }
@@ -94,7 +124,7 @@ class AnimalPhotoController extends Controller
         $record = $this->animal($request, $animal);
         Gate::authorize('update', $record);
         $target = $this->foto($record, $foto);
-        $disk = Storage::disk('public');
+        $disk = Storage::disk('local');
         $trash = 'animais/.trash/'.Str::uuid();
         if (! $disk->move($target->caminho, $trash)) {
             throw new HttpException(500, 'Não foi possível remover a fotografia.');

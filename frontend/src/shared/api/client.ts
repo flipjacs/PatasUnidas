@@ -18,22 +18,25 @@ function xsrfToken(): string | undefined {
   try { return decodeURIComponent(cookie.slice('XSRF-TOKEN='.length)) } catch { return undefined }
 }
 
-export async function request<T>(url: string, options: { method?: 'GET' | 'POST'; body?: unknown; expectedStatus?: number } = {}): Promise<T> {
+export async function request<T>(url: string, options: { method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'; body?: unknown; expectedStatus?: number } = {}): Promise<T> {
   const method = options.method ?? 'GET'
   const headers: Record<string, string> = { Accept: 'application/json' }
-  if (options.body !== undefined) headers['Content-Type'] = 'application/json'
+  if (options.body !== undefined && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json'
   if (method !== 'GET') {
     const token = xsrfToken()
     if (token) headers['X-XSRF-TOKEN'] = token
   }
   let response: Response
   try {
-    response = await fetch(url, { method, headers, credentials: 'include', ...(options.body === undefined ? {} : { body: JSON.stringify(options.body) }) })
+    response = await fetch(url, { method, headers, credentials: 'include', ...(options.body === undefined ? {} : { body: options.body instanceof FormData ? options.body : JSON.stringify(options.body) }) })
   } catch {
     throw new ApiError(0, 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.')
   }
   const data = await response.json().catch(() => null) as { message?: string; errors?: Record<string, string[]> } | null
   if (!response.ok || (options.expectedStatus !== undefined && response.status !== options.expectedStatus)) {
+    if (response.status === 401 && url.startsWith(apiBase) && !/\/(auth|public)\//.test(url.slice(apiBase.length))) {
+      window.dispatchEvent(new Event('patas:session-expired'))
+    }
     throw new ApiError(response.status, data?.message ?? 'Não foi possível concluir a solicitação.', data?.errors)
   }
   return data as T
@@ -60,7 +63,7 @@ export function errorMessage(error: unknown, context: 'login' | 'cadastro' | 'se
   if (error.status === 400 || error.status === 422) {
     if (error.errors?.nome) return 'Confira o nome informado (até 100 caracteres).'
     if (error.errors?.email) return 'Confira o e-mail informado.'
-    if (error.errors?.senha) return 'Confira a senha: use de 12 a 72 caracteres e no máximo 72 bytes.'
+    if (error.errors?.senha) return 'Confira a senha: use de 8 a 72 caracteres e no máximo 72 bytes.'
     return 'Confira os dados informados e tente novamente.'
   }
   if (error.status >= 500) return 'O servidor está indisponível. Tente novamente mais tarde.'
