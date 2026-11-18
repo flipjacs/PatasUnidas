@@ -96,8 +96,6 @@
 .personal-medical-detail dl { margin: 1.5rem 0 0; display: grid; gap: 1.2rem; }
 .personal-medical-detail dt { color: var(--muted); font-size: .78rem; }
 .personal-medical-detail dd { margin: .25rem 0 0; color: var(--ink); overflow-wrap: anywhere; }
-.detail-actions { margin-top: 1.8rem; padding-top: 1.4rem; display: flex; align-items: center; flex-wrap: wrap; gap: .6rem 1.1rem; border-top: 1px solid var(--border); }
-.detail-action-link { min-height: 2.75rem; display: inline-flex; align-items: center; color: var(--forest); font-size: .88rem; font-weight: 800; text-decoration: underline; text-underline-offset: .3em; }
 @media (max-width: 760px) {
   .personal-overview-grid, .personal-action-layout { grid-template-columns: 1fr; }
   .personal-action-context { display: grid; grid-template-columns: minmax(7rem, .35fr) minmax(0, .65fr); align-items: center; }
@@ -115,6 +113,4 @@
   .personal-installments li { grid-template-columns: minmax(0, 1fr) auto; }
   .personal-installments li .personal-status { grid-column: 1 / -1; justify-self: start; }
   .personal-timeline li { grid-template-columns: 1fr; gap: .4rem; }
-  .detail-actions { align-items: stretch; flex-direction: column; }
-  .detail-actions .button { width: 100%; }
 }

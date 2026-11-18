@@ -189,8 +189,8 @@ export function Details() {
           <section className="detail-ong"><h2>ONG responsável</h2><p>{animal.ong.nome}</p><span>{animal.ong.cidade}, {animal.ong.estado}</span><p><Link to={`/transparencia/${animal.ong.id}`}>Ver transparência desta ONG</Link></p></section>
           {(status === 'unauthenticated' || status === 'expired' || user?.perfil === 'USUARIO') && <nav className="detail-actions" aria-label={`Apoiar ${animal.nome}`}>
             <Link className="button button-primary" to={`/animais/${animal.id}/solicitar`}>Solicitar adoção</Link>
-            <Link className="detail-action-link" to={`/animais/${animal.id}/apadrinhar`}>Apadrinhar {animal.nome}</Link>
-            <Link className="detail-action-link" to={`/animais/${animal.id}/doar`}>Doar para {animal.ong.nome}</Link>
+            <Link className="button button-secondary" to={`/animais/${animal.id}/apadrinhar`}>Apadrinhar {animal.nome}</Link>
+            <Link className="button button-secondary" to={`/animais/${animal.id}/doar`}>Doar para {animal.ong.nome}</Link>
           </nav>}
         </div>
       </article>}

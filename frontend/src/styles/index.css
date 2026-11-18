@@ -208,6 +208,13 @@ svg { display: block; }
 .detail-ong h2 { font-size: 1.25rem; letter-spacing: -.025em; }
 .detail-ong p { margin-top: .35rem; color: var(--muted); font-size: .9rem; }
 .detail-ong span { display: block; margin-top: .25rem; color: var(--muted); font-size: .83rem; }
+.detail-actions { margin-top: 1.8rem; padding-top: 1.4rem; display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; border-top: 1px solid var(--border); }
+.detail-actions .button { max-width: 100%; white-space: normal; }
+
+@media (max-width: 600px) {
+  .detail-actions { align-items: stretch; flex-direction: column; }
+  .detail-actions .button { width: 100%; }
+}
 
 @media (min-width: 768px) {
   .app-shell { padding-bottom: 0; }
