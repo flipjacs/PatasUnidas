@@ -1,6 +1,6 @@
 # Patas Unidas Web
 
-Versão web independente do Patas Unidas. O frontend usa a API Laravel para cadastro e autenticação por sessão; os dados de animais permanecem demonstrativos.
+Versão web independente do Patas Unidas. O frontend usa a API Laravel com sessão para autenticação e consulta os animais persistidos no MySQL.
 
 ## Organização
 
@@ -43,7 +43,7 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5174 --strictPort
 ```
 
-Acesse `http://127.0.0.1:5174`. A API ficará em `http://127.0.0.1:8001/api`; `VITE_API_BASE_URL` configura o endereço da API. Use o mesmo hostname no frontend e na API para que os cookies de sessão e CSRF funcionem. O endpoint de saúde do Laravel é `http://127.0.0.1:8001/up`.
+Acesse `http://127.0.0.1:5174`. A API fica em `http://127.0.0.1:8001/api/v1`; `VITE_API_BASE_URL` configura o endereço da API. Use o mesmo hostname no frontend e na API para que os cookies de sessão e CSRF funcionem. O endpoint de saúde do Laravel é `http://127.0.0.1:8001/up`.
 
 O MySQL fica em `127.0.0.1:3309` por padrão, com banco e usuário próprios. A alteração de credenciais no `.env` do Compose após a criação do volume não altera usuários já inicializados no MySQL. Para parar sem apagar os dados: `docker compose down`. Não use as credenciais de exemplo em produção.
 
@@ -54,6 +54,4 @@ cd frontend && npm run build && npm run lint
 cd ../backend && php artisan test
 ```
 
-## Pendências
-
-Substituir as fotografias provisórias por imagens com licença confirmada. Provisionar a primeira ONG e o primeiro administrador por um processo administrativo seguro antes de usar o cadastro interno.
+Para preparar a apresentação local, consulte [DEMO.md](DEMO.md) e [RUNBOOK.md](RUNBOOK.md). Fotografias sem procedência confirmada não devem ser publicadas como se fossem registros reais dos animais.

@@ -1,5 +1,5 @@
 .workspace { min-height: 100dvh; display: grid; grid-template-columns: 16.5rem minmax(0, 1fr); background: var(--sand); color: var(--ink); }
-.workspace-sidebar { position: sticky; top: 0; height: 100dvh; min-height: 38rem; padding: 1.6rem 1rem 1.25rem; display: flex; flex-direction: column; background: var(--forest); color: #f4f7f2; }
+.workspace-sidebar { position: sticky; top: 0; height: 100dvh; min-height: 0; padding: 1.6rem 1rem 1.25rem; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; background: var(--forest); color: #f4f7f2; }
 .workspace-sidebar-brand { width: fit-content; margin: .1rem .7rem 2.9rem; border-radius: var(--radius-sm); }
 .workspace-sidebar-brand .brand-name { font-size: 1.12rem; }
 .workspace-sidebar-context { margin: 0 .7rem 2.6rem; padding: 1.05rem 1.1rem; display: grid; gap: .35rem; border: 1px solid #ffffff29; border-radius: var(--radius-md); background: #ffffff0c; }

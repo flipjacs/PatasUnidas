@@ -28,6 +28,7 @@ function TeamIcon() {
 }
 
 function RecordIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg> }
+function FinanceIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg> }
 
 function ContextLabel({ area, user }: { area: Area; user: Usuario }) {
   if (area === 'platform') return <>Administração da plataforma</>
@@ -88,10 +89,13 @@ function WorkspaceLayout({ area, user, children }: { area: Area; user: Usuario; 
         <nav className="workspace-sidebar-nav" aria-label="Páginas disponíveis">
           <span className="workspace-nav-caption">Espaço de trabalho</span>
           <NavLink to={home} end onClick={() => setOpen(false)}><OverviewIcon />Visão geral</NavLink>
+          {area === 'platform' && <NavLink to="/plataforma/ongs/nova" onClick={() => setOpen(false)}><TeamIcon />Cadastrar ONG</NavLink>}
           {area === 'institutional' && <Link className={location.pathname.startsWith('/ong/animais') && !clinicalRoute ? 'active' : undefined} aria-current={location.pathname.startsWith('/ong/animais') && !clinicalRoute ? 'page' : undefined} to="/ong/animais" onClick={() => setOpen(false)}><AnimalIcon />Animais da ONG</Link>}
           {area === 'institutional' && user.perfil !== 'VETERINARIO' && <NavLink to="/ong/adocoes" onClick={() => setOpen(false)}><TeamIcon />Adoções</NavLink>}
+          {area === 'institutional' && user.perfil !== 'VETERINARIO' && <><span className="workspace-nav-caption workspace-nav-caption--secondary">Gestão de recursos</span><NavLink to="/ong/financeiro" onClick={() => setOpen(false)}><FinanceIcon />Financeiro</NavLink><NavLink to="/ong/doacoes" onClick={() => setOpen(false)}><FinanceIcon />Doações</NavLink><NavLink to="/ong/apadrinhamentos" onClick={() => setOpen(false)}><FinanceIcon />Apadrinhamentos</NavLink></>}
           {area === 'institutional' && <Link className={clinicalRoute ? 'active' : undefined} aria-current={clinicalRoute ? 'page' : undefined} to="/ong/prontuarios" onClick={() => setOpen(false)}><RecordIcon />Prontuários</Link>}
           {area === 'institutional' && user.perfil === 'ADMINISTRADOR' && <NavLink to="/ong/funcionarios" onClick={() => setOpen(false)}><TeamIcon />Funcionários</NavLink>}
+          {area === 'institutional' && <><span className="workspace-nav-caption workspace-nav-caption--secondary">Prestação de contas</span><NavLink to="/ong/relatorios" onClick={() => setOpen(false)}><RecordIcon />Relatórios</NavLink>{user.perfil !== 'VETERINARIO' && <NavLink to="/ong/transparencia" onClick={() => setOpen(false)}><RecordIcon />Transparência</NavLink>}</>}
           <span className="workspace-nav-caption workspace-nav-caption--secondary">Área pública</span>
           <NavLink to="/animais" onClick={() => setOpen(false)}><AnimalIcon />Catálogo de animais</NavLink>
         </nav>
@@ -129,6 +133,12 @@ export function InstitutionalFrame() {
   const { user } = useAuth()
   if (!user) return null
   return <WorkspaceLayout area="institutional" user={user}><Outlet /></WorkspaceLayout>
+}
+
+export function PlatformFrame() {
+  const { user } = useAuth()
+  if (!user) return null
+  return <WorkspaceLayout area="platform" user={user}><Outlet /></WorkspaceLayout>
 }
 
 export function WorkspaceHome({ area }: { area: Area }) {

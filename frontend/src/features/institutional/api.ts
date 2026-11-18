@@ -24,6 +24,13 @@ export type Dashboard = {
   doacoes?: { pendentes: number; confirmadas: number; valorConfirmado: string }
 }
 
+export type FinancialStatus = 'PENDENTE' | 'APROVADA' | 'REALIZADA' | 'CANCELADA'
+export type FinancialMovement = { id: number; tipo: 'RECEITA' | 'DESPESA'; categoria: string; descricao: string; valor: string; status: FinancialStatus; origem: { tipo: string; id: number | null }; registradoPor: { id: number; nome: string } | null; aprovadoPor: { id: number; nome: string } | null; confirmadoPor: { id: number; nome: string } | null; canceladoPor: { id: number; nome: string } | null; aprovadoEm: string | null; confirmadoEm: string | null; canceladoEm: string | null; createdAt: string }
+export type FinancialSummary = { receitasRealizadas: string; despesasRealizadas: string; saldoRealizado: string; receitasPendentes: string; despesasPendentes: string; despesasAprovadas: string }
+export type InternalDonation = { id: number; ong: { id: number; nome: string }; doador: { id: number; nome: string } | null; valor: string; status: 'PENDENTE' | 'CONFIRMADA' | 'CANCELADA'; mensagem: string | null; confirmadoPor: { id: number; nome: string } | null; canceladoPor: { id: number; nome: string } | null; confirmadoEm: string | null; canceladoEm: string | null; createdAt: string }
+export type InternalSponsorship = { id: number; animal: { id: number; nome: string }; padrinho: { id: number; nome: string; email: string }; modalidade: 'UNICO' | 'MENSAL'; valor: string; status: 'ATIVO' | 'ENCERRADO'; dataInicio: string; dataEncerramento: string | null; motivoEncerramento: string | null; justificativaEncerramento: string | null; proximoVencimento: string | null; createdAt: string }
+export type SponsorshipInstallment = { id: number; numero: number; valor: string; vencimento: string; status: 'PENDENTE' | 'CONFIRMADA' | 'CANCELADA'; vencida: boolean; confirmadoEm: string | null; confirmadoPor?: { id: number; nome: string } | null }
+
 function query(params: Record<string, string | number | undefined>): string {
   const search = new URLSearchParams()
   Object.entries(params).forEach(([key, value]) => { if (value !== undefined && value !== '') search.set(key, String(value)) })
@@ -42,6 +49,19 @@ async function write<T>(path: string, method: 'POST' | 'PATCH' | 'DELETE', body?
 }
 
 export const loadDashboard = (de?: string, ate?: string) => request<Dashboard>(apiUrl(`/ong/dashboard${query({ de, ate })}`))
+export const loadFinancialSummary = (de?: string, ate?: string) => request<FinancialSummary>(apiUrl(`/ong/finance/resumo${query({ de, ate })}`))
+export const listFinancialMovements = (params: Record<string, string | number | undefined>) => page<FinancialMovement>(`/ong/finance/movimentacoes${query(params)}`)
+export const getFinancialMovement = (id: number) => request<FinancialMovement>(apiUrl(`/ong/finance/movimentacoes/${id}`))
+export const createFinancialMovement = (value: { tipo: 'RECEITA' | 'DESPESA'; categoria: string; descricao: string; valor: string }) => write<FinancialMovement>('/ong/finance/movimentacoes', 'POST', value)
+export const decideFinancialMovement = (id: number, action: 'aprovar' | 'confirmar-pagamento' | 'confirmar-recebimento' | 'cancelar') => write<FinancialMovement>(`/ong/finance/movimentacoes/${id}/${action}`, 'PATCH')
+export const listInternalDonations = (params: Record<string, string | number | undefined>) => page<InternalDonation>(`/ong/donations${query(params)}`)
+export const getInternalDonation = (id: number) => request<InternalDonation>(apiUrl(`/ong/donations/${id}`))
+export const decideInternalDonation = (id: number, action: 'confirmar' | 'cancelar') => write<InternalDonation>(`/ong/donations/${id}/${action}`, 'PATCH')
+export const listInternalSponsorships = (params: Record<string, string | number | undefined>) => page<InternalSponsorship>(`/ong/sponsorships${query(params)}`)
+export const getInternalSponsorship = (id: number) => request<InternalSponsorship>(apiUrl(`/ong/sponsorships/${id}`))
+export const listInternalInstallments = (id: number, params: Record<string, string | number | undefined>) => page<SponsorshipInstallment>(`/ong/sponsorships/${id}/parcelas${query(params)}`)
+export const confirmInternalInstallment = (id: number, installment: number) => write<SponsorshipInstallment>(`/ong/sponsorships/${id}/parcelas/${installment}/confirmar`, 'PATCH')
+export const closeInternalSponsorship = (id: number, justificativa: string) => write<InternalSponsorship>(`/ong/sponsorships/${id}/encerrar`, 'PATCH', { justificativa })
 export const listAnimals = (params: Record<string, string | number | undefined>) => page<Animal>(`/ong/animais${query(params)}`)
 export const getAnimal = (id: number) => request<Animal>(apiUrl(`/ong/animais/${id}`))
 export const createAnimal = (value: AnimalInput) => write<Animal>('/ong/animais', 'POST', value)

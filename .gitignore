@@ -9,3 +9,5 @@
 !**/.env.example
 .idea/
 .DS_Store
+artifacts/f10/screenshots/
+artifacts/f10/test-results/

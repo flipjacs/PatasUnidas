@@ -5,7 +5,7 @@ import { AuthProvider } from '../features/auth/AuthContext'
 import { profileHome, useAuth, type Perfil } from '../features/auth/auth'
 import { Home } from '../features/home/Home'
 import { Animals, Details } from '../features/animals/AnimalPages'
-import { InstitutionalFrame, PersonalFrame, WorkspaceHome } from '../features/workspace/Workspace'
+import { InstitutionalFrame, PersonalFrame, PlatformFrame } from '../features/workspace/Workspace'
 import { Button, Notice } from '../shared/components/Ui'
 
 const PersonalOverview = lazy(async () => ({ default: (await import('../features/personal/PersonalOverview')).PersonalOverview }))
@@ -33,6 +33,23 @@ const MedicalCreate = lazy(async () => ({ default: (await import('../features/in
 const MedicalDetails = lazy(async () => ({ default: (await import('../features/institutional/MedicalRecords')).MedicalDetails }))
 const MedicalCorrect = lazy(async () => ({ default: (await import('../features/institutional/MedicalRecords')).MedicalCorrect }))
 const MedicalCorrections = lazy(async () => ({ default: (await import('../features/institutional/MedicalRecords')).MedicalCorrections }))
+const FinanceOverview = lazy(async () => ({ default: (await import('../features/institutional/Finance')).FinanceOverview }))
+const FinanceCreate = lazy(async () => ({ default: (await import('../features/institutional/Finance')).FinanceCreate }))
+const FinanceDetails = lazy(async () => ({ default: (await import('../features/institutional/Finance')).FinanceDetails }))
+const InternalDonations = lazy(async () => ({ default: (await import('../features/institutional/FinancialRelations')).DonationList }))
+const InternalDonationDetails = lazy(async () => ({ default: (await import('../features/institutional/FinancialRelations')).DonationDetails }))
+const InternalSponsorships = lazy(async () => ({ default: (await import('../features/institutional/FinancialRelations')).SponsorshipList }))
+const InternalSponsorshipDetails = lazy(async () => ({ default: (await import('../features/institutional/FinancialRelations')).SponsorshipDetails }))
+const Reports = lazy(async () => ({ default: (await import('../features/institutional/Reports')).Reports }))
+const TransparencyList = lazy(async () => ({ default: (await import('../features/institutional/Transparency')).TransparencyList }))
+const TransparencyCreate = lazy(async () => ({ default: (await import('../features/institutional/Transparency')).TransparencyCreate }))
+const TransparencyDetails = lazy(async () => ({ default: (await import('../features/institutional/Transparency')).TransparencyDetails }))
+const PlatformOverview = lazy(async () => ({ default: (await import('../features/platform/Platform')).PlatformOverview }))
+const PlatformCreate = lazy(async () => ({ default: (await import('../features/platform/Platform')).PlatformCreate }))
+const PlatformDetails = lazy(async () => ({ default: (await import('../features/platform/Platform')).PlatformDetails }))
+const PublicTransparencyHome = lazy(async () => ({ default: (await import('../features/public/Transparency')).PublicTransparencyHome }))
+const PublicTransparencyList = lazy(async () => ({ default: (await import('../features/public/Transparency')).PublicTransparencyList }))
+const PublicTransparencyDetails = lazy(async () => ({ default: (await import('../features/public/Transparency')).PublicTransparencyDetails }))
 
 function Protected({ children, allowed }: { children: ReactNode; allowed: Perfil[] }) {
   const { status, user, sessionError, refresh } = useAuth()
@@ -74,6 +91,17 @@ function AppRoutes() {
       <Route path="funcionarios/:id/editar" element={<Protected allowed={['ADMINISTRADOR']}><InstitutionalEmployeeEdit /></Protected>} />
       <Route path="adocoes" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InstitutionalAdoptionList /></Protected>} />
       <Route path="adocoes/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InstitutionalAdoptionDetails /></Protected>} />
+      <Route path="financeiro" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><FinanceOverview /></Protected>} />
+      <Route path="financeiro/novo" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><FinanceCreate /></Protected>} />
+      <Route path="financeiro/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><FinanceDetails /></Protected>} />
+      <Route path="doacoes" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InternalDonations /></Protected>} />
+      <Route path="doacoes/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InternalDonationDetails /></Protected>} />
+      <Route path="apadrinhamentos" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InternalSponsorships /></Protected>} />
+      <Route path="apadrinhamentos/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InternalSponsorshipDetails /></Protected>} />
+      <Route path="relatorios" element={<Reports />} />
+      <Route path="transparencia" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><TransparencyList /></Protected>} />
+      <Route path="transparencia/novo" element={<Protected allowed={['ADMINISTRADOR']}><TransparencyCreate /></Protected>} />
+      <Route path="transparencia/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><TransparencyDetails /></Protected>} />
       <Route path="prontuarios" element={<ClinicalAnimalSelect />} />
       <Route path="animais/:animalId/prontuarios" element={<MedicalHistory />} />
       <Route path="animais/:animalId/prontuarios/novo" element={<Protected allowed={['ADMINISTRADOR', 'VETERINARIO']}><MedicalCreate /></Protected>} />
@@ -81,7 +109,14 @@ function AppRoutes() {
       <Route path="animais/:animalId/prontuarios/:recordId/corrigir" element={<Protected allowed={['ADMINISTRADOR', 'VETERINARIO']}><MedicalCorrect /></Protected>} />
       <Route path="animais/:animalId/prontuarios/:recordId/correcoes" element={<MedicalCorrections />} />
     </Route>
-    <Route path="/plataforma" element={<Protected allowed={['CRIADOR_PLATAFORMA']}><WorkspaceHome area="platform" /></Protected>} />
+    <Route path="/plataforma" element={<Protected allowed={['CRIADOR_PLATAFORMA']}><PlatformFrame /></Protected>}>
+      <Route index element={<PlatformOverview />} />
+      <Route path="ongs/nova" element={<PlatformCreate />} />
+      <Route path="ongs/:id" element={<PlatformDetails />} />
+    </Route>
+    <Route path="/transparencia" element={<PublicTransparencyHome />} />
+    <Route path="/transparencia/:ongId" element={<PublicTransparencyList />} />
+    <Route path="/transparencia/:ongId/:id" element={<PublicTransparencyDetails />} />
     <Route path="/animais" element={<Animals />} />
     <Route path="/animais/:id" element={<Details />} />
     <Route path="/animais/:id/solicitar" element={<Protected allowed={['USUARIO']}><PersonalFrame><PersonalAction action="solicitar" /></PersonalFrame></Protected>} />

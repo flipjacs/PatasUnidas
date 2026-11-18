@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import heroArt from '../../assets/amazon-river-dog.webp'
+import heroArt from '../../assets/amazon-scarlet-macaw.jpg'
 import { AnimalCard } from '../animals/AnimalPages'
 import { listPublicAnimals, type PublicAnimalsPage } from '../animals/catalog'
 import { profileHome, useAuth } from '../auth/auth'
@@ -128,8 +128,8 @@ export function Home() {
           </div>
         </div>
         <div className="landing-hero-media">
-          <img src={heroArt} alt="Ilustração de um cão diante de um rio e da floresta amazônica" width="1672" height="941" fetchPriority="high" />
-          <span className="landing-image-credit">Imagem ilustrativa gerada digitalmente</span>
+          <img src={heroArt} alt="Fotografia de uma arara-vermelha na região amazônica de Madre de Dios, no Peru" width="3679" height="2453" fetchPriority="high" />
+          <a className="landing-image-credit" href="https://commons.wikimedia.org/wiki/File:Flickr_-_ggallice_-_Scarlet_macaw.jpg" target="_blank" rel="noreferrer">Foto: Geoff Gallice · CC BY 2.0</a>
         </div>
       </section>
 
@@ -155,13 +155,13 @@ export function Home() {
       </section>
 
       <section className="landing-amazonia" aria-labelledby="amazonia-title" data-reveal>
-        <div className="landing-amazonia-media"><img src={heroArt} alt="" width="1672" height="941" loading="lazy" /><span>Imagem ilustrativa gerada digitalmente</span></div>
+        <div className="landing-amazonia-media"><img src={heroArt} alt="" width="3679" height="2453" loading="lazy" /><a href="https://commons.wikimedia.org/wiki/File:Flickr_-_ggallice_-_Scarlet_macaw.jpg" target="_blank" rel="noreferrer">Foto: Geoff Gallice · CC BY 2.0</a></div>
         <div className="landing-amazonia-copy"><p className="section-label">Amazônia contemporânea</p><h2 id="amazonia-title">Da Amazônia, uma rede de cuidado.</h2><p>Nossa identidade se inspira na riqueza natural da Amazônia. O propósito é aproximar pessoas e organizações que protegem vidas.</p></div>
       </section>
 
       <section className="landing-section landing-transparency" id="transparencia" aria-labelledby="transparency-title" data-reveal>
         <div><p className="section-label">Transparência</p><h2 id="transparency-title">Cuidado também pede clareza.</h2></div>
-        <p>As ONGs podem publicar demonstrativos financeiros consolidados por período. As informações públicas ajudam a compreender o trabalho realizado sem expor dados pessoais de quem contribui.</p>
+        <div><p>As ONGs podem publicar demonstrativos financeiros consolidados por período. As informações públicas ajudam a compreender o trabalho realizado sem expor dados pessoais de quem contribui.</p><Link className="landing-transparency-link" to="/transparencia">Consultar demonstrativos ↗</Link></div>
       </section>
 
       <section className="landing-final" aria-labelledby="final-title" data-reveal><div className="landing-final-inner"><div><p className="section-label">O próximo encontro</p><h2 id="final-title">Uma nova história pode começar com você.</h2></div><Link className="button landing-final-button" to="/animais">Conhecer animais</Link></div></section>
@@ -170,7 +170,7 @@ export function Home() {
       <div className="landing-footer-inner">
         <div className="landing-footer-main">
           <div className="landing-footer-brand"><Brand /><p>Toda história merece continuar.</p><small>Uma rede de cuidado para animais e pessoas.</small></div>
-          <nav className="landing-footer-column" aria-label="Explorar"><h2>Explorar</h2><a href="#inicio">Início</a><Link to="/animais">Animais</Link><a href="#como-funciona">Como funciona</a><a href="#ongs">ONGs</a><a href="#transparencia">Transparência</a></nav>
+          <nav className="landing-footer-column" aria-label="Explorar"><h2>Explorar</h2><a href="#inicio">Início</a><Link to="/animais">Animais</Link><a href="#como-funciona">Como funciona</a><a href="#ongs">ONGs</a><Link to="/transparencia">Transparência</Link></nav>
           <nav className="landing-footer-column" aria-label="Plataforma"><h2>Plataforma</h2>{status === 'authenticated' && user ? <Link to={profileHome(user.perfil)}>Minha área</Link> : <><Link to="/login">Entrar</Link><Link to="/cadastro">Criar conta</Link></>}</nav>
         </div>
         <div className="landing-footer-bottom"><small>© {currentYear} Patas Unidas · Projeto acadêmico</small><span>Adoção responsável e cuidado em rede.</span></div>

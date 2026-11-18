@@ -1,0 +1,24 @@
+.report-metrics { margin: 1.25rem 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: .65rem; }
+.report-metrics > div { min-width: 0; padding: 1rem; border-radius: .75rem; background: var(--soft); }
+.report-metrics dt { color: var(--muted); font-size: .76rem; font-weight: 700; }
+.report-metrics dd { margin: .45rem 0 0; color: var(--forest); font-size: clamp(1rem, 1.6vw, 1.4rem); font-weight: 850; overflow-wrap: anywhere; }
+.report-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 1.25rem; }
+.report-category-grid > div, .report-category-grid > section { min-width: 0; }
+.report-category-grid h2, .report-category-grid h3 { color: var(--forest); font-size: 1rem; }
+.report-category-grid ul { margin: .8rem 0 0; padding: 0; list-style: none; }
+.report-category-grid li { padding: .65rem 0; display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--border); font-size: .85rem; }
+.report-category-grid li strong { white-space: nowrap; }
+.public-reports { width: min(calc(100% - 2rem), 75rem); padding-block: 4rem 6rem; }
+.public-reports-intro { max-width: 52rem; margin-bottom: 2rem; }
+.public-reports-intro h1 { margin: .7rem 0 1rem; color: var(--forest); font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; text-wrap: balance; }
+.public-reports-intro p:last-child { max-width: 65ch; color: var(--muted); }
+.public-reports-lookup { max-width: 42rem; }
+.public-reports-lookup form { margin-top: 1rem; display: grid; gap: .5rem; }
+.public-reports-lookup form > div { display: flex; flex-wrap: wrap; gap: .7rem; }
+.public-reports-lookup input { min-height: 2.8rem; min-width: 0; padding: .65rem .8rem; border: 1px solid var(--border); border-radius: .6rem; font: inherit; }
+.public-reports-lookup p:last-child { margin-top: 1rem; }
+.public-report-list { display: grid; gap: 1rem; }
+.public-report-list h2 { margin: .4rem 0; font-size: 1.3rem; }
+.public-report-list h2 a, .public-reports-lookup a { color: var(--forest); text-decoration: underline; text-underline-offset: .2em; }
+.public-report-list p { margin-bottom: .6rem; }
+@media (max-width: 700px) { .report-category-grid { grid-template-columns: 1fr; }.public-reports { padding-top: 2rem; }.public-reports-lookup form > div > * { width: 100%; } }

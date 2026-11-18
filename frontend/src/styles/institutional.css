@@ -56,6 +56,8 @@
 .institutional-status { max-width: fit-content; padding: .36rem .65rem; display: inline-flex; align-items: center; border-radius: 999px; background: #edf0eb; color: #455a4a; font-size: .72rem; font-weight: 800; line-height: 1.25; }
 .institutional-status--disponivel, .institutional-status--ativo { background: #e3f1e5; color: #235c39; }
 .institutional-status--indisponivel, .institutional-status--inativo { background: #f5ebdd; color: #80542d; }
+.institutional-status--suspensa, .institutional-status--rascunho { background: #f5ebdd; color: #80542d; }
+.institutional-status--publicado { background: #e3f1e5; color: #235c39; }
 .institutional-status--em_processo_adocao { background: #e6edf4; color: #355c79; }
 .institutional-status--falecido { background: #f2e6e3; color: #8c493d; }
 .institutional-status--pendente { background: #f5ebdd; color: #80542d; }

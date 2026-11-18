@@ -169,7 +169,7 @@ export function Details() {
       <div className="detail-header"><Link to={back} className="back">Voltar aos animais</Link></div>
       {!validId && <section className="empty-state"><h1>Animal não encontrado</h1><p>Volte ao catálogo para ver os animais disponíveis.</p></section>}
       {loading && validId && <p className="page-state" role="status">Carregando detalhes...</p>}
-      {!loading && error && <div className="page-state" role="alert"><p>{error}</p>{error !== 'Este animal não está disponível no catálogo.' && <Button type="button" secondary onClick={() => { setLoading(true); setAttempt(value => value + 1) }}>Tentar novamente</Button>}</div>}
+      {!loading && error && <div className="page-state" role="alert"><h1>{error === 'Este animal não está disponível no catálogo.' ? 'Animal indisponível' : 'Não foi possível carregar o animal'}</h1><p>{error}</p>{error !== 'Este animal não está disponível no catálogo.' && <Button type="button" secondary onClick={() => { setLoading(true); setAttempt(value => value + 1) }}>Tentar novamente</Button>}</div>}
       {!loading && animal && <article className="detail-layout">
         <div className="detail-gallery">
           <Photo name={animal.nome} species={speciesLabel[animal.especie]} src={selectedPhoto?.url} className="detail-photo" eager />
@@ -186,7 +186,7 @@ export function Details() {
             <div><dt>Idade aproximada</dt><dd>{approximateAge(animal.idadeAproximada)}</dd></div>
             <div><dt>Sexo</dt><dd>{sexLabel[animal.sexo]}</dd></div>
           </dl>
-          <section className="detail-ong"><h2>ONG responsável</h2><p>{animal.ong.nome}</p><span>{animal.ong.cidade}, {animal.ong.estado}</span></section>
+          <section className="detail-ong"><h2>ONG responsável</h2><p>{animal.ong.nome}</p><span>{animal.ong.cidade}, {animal.ong.estado}</span><p><Link to={`/transparencia/${animal.ong.id}`}>Ver transparência desta ONG</Link></p></section>
           {(status === 'unauthenticated' || status === 'expired' || user?.perfil === 'USUARIO') && <nav className="detail-actions" aria-label={`Apoiar ${animal.nome}`}>
             <Link className="button button-primary" to={`/animais/${animal.id}/solicitar`}>Solicitar adoção</Link>
             <Link className="detail-action-link" to={`/animais/${animal.id}/apadrinhar`}>Apadrinhar {animal.nome}</Link>

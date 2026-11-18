@@ -18,7 +18,7 @@ export function LoadState({ loading, error, retry }: { loading: boolean; error: 
 
 export function Status({ value }: { value: string | boolean }) {
   const key = typeof value === 'boolean' ? (value ? 'ATIVO' : 'INATIVO') : value
-  const labels: Record<string, string> = { DISPONIVEL: 'Disponível', INDISPONIVEL: 'Indisponível', EM_PROCESSO_ADOCAO: 'Em adoção', ADOTADO: 'Adotado', FALECIDO: 'Falecido', ATIVO: 'Ativo', INATIVO: 'Inativo', PENDENTE: 'Pendente', APROVADA: 'Aprovada', REJEITADA: 'Rejeitada', CANCELADA: 'Cancelada', CONCLUIDA: 'Concluída' }
+  const labels: Record<string, string> = { DISPONIVEL: 'Disponível', INDISPONIVEL: 'Indisponível', EM_PROCESSO_ADOCAO: 'Em adoção', ADOTADO: 'Adotado', FALECIDO: 'Falecido', ATIVO: 'Ativo', INATIVO: 'Inativo', PENDENTE: 'Pendente', APROVADA: 'Aprovada', REJEITADA: 'Rejeitada', CANCELADA: 'Cancelada', CONCLUIDA: 'Concluída', REALIZADA: 'Realizada', CONFIRMADA: 'Confirmada', ENCERRADO: 'Encerrado', SUSPENSA: 'Suspensa', RASCUNHO: 'Rascunho', PUBLICADO: 'Publicado' }
   return <span className={`institutional-status institutional-status--${key.toLowerCase()}`}>{labels[key] ?? key}</span>
 }
 
