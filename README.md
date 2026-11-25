@@ -53,5 +53,3 @@ O MySQL fica em `127.0.0.1:3309` por padrão, com banco e usuário próprios. A 
 cd frontend && npm run build && npm run lint
 cd ../backend && php artisan test
 ```
-
-Para preparar a apresentação local, consulte [DEMO.md](DEMO.md) e [RUNBOOK.md](RUNBOOK.md). Fotografias sem procedência confirmada não devem ser publicadas como se fossem registros reais dos animais.
