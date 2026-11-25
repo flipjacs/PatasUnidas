@@ -28,6 +28,7 @@ function TeamIcon() {
 }
 
 function RecordIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg> }
+function StockIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7zm0 0l9 4 9-4M12 11v10M7 5l9 4" /></svg> }
 function FinanceIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg> }
 
 function ContextLabel({ area, user }: { area: Area; user: Usuario }) {
@@ -92,6 +93,7 @@ function WorkspaceLayout({ area, user, children }: { area: Area; user: Usuario; 
           {area === 'platform' && <NavLink to="/plataforma/ongs/nova" onClick={() => setOpen(false)}><TeamIcon />Cadastrar ONG</NavLink>}
           {area === 'institutional' && <Link className={location.pathname.startsWith('/ong/animais') && !clinicalRoute ? 'active' : undefined} aria-current={location.pathname.startsWith('/ong/animais') && !clinicalRoute ? 'page' : undefined} to="/ong/animais" onClick={() => setOpen(false)}><AnimalIcon />Animais da ONG</Link>}
           {area === 'institutional' && user.perfil !== 'VETERINARIO' && <NavLink to="/ong/adocoes" onClick={() => setOpen(false)}><TeamIcon />Adoções</NavLink>}
+          {area === 'institutional' && <NavLink to="/ong/estoque" onClick={() => setOpen(false)}><StockIcon />Estoque</NavLink>}
           {area === 'institutional' && user.perfil !== 'VETERINARIO' && <><span className="workspace-nav-caption workspace-nav-caption--secondary">Gestão de recursos</span><NavLink to="/ong/financeiro" onClick={() => setOpen(false)}><FinanceIcon />Financeiro</NavLink><NavLink to="/ong/doacoes" onClick={() => setOpen(false)}><FinanceIcon />Doações</NavLink><NavLink to="/ong/apadrinhamentos" onClick={() => setOpen(false)}><FinanceIcon />Apadrinhamentos</NavLink></>}
           {area === 'institutional' && <Link className={clinicalRoute ? 'active' : undefined} aria-current={clinicalRoute ? 'page' : undefined} to="/ong/prontuarios" onClick={() => setOpen(false)}><RecordIcon />Prontuários</Link>}
           {area === 'institutional' && user.perfil === 'ADMINISTRADOR' && <NavLink to="/ong/funcionarios" onClick={() => setOpen(false)}><TeamIcon />Funcionários</NavLink>}

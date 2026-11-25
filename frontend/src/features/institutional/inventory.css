@@ -1,0 +1,46 @@
+.inventory-nav { display: flex; flex-wrap: wrap; gap: .35rem; margin: 0 0 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: .6rem; }
+.inventory-nav a { min-height: 2.75rem; padding: .7rem 1rem; border-radius: .5rem; color: var(--foliage); font-size: .85rem; font-weight: 750; }
+.inventory-nav a.active { background: var(--forest); color: #fff; }
+.inventory-nav a:hover:not(.active) { background: var(--soft); }
+.inventory-filters > div { flex: 1 1 9rem; max-width: 100%; }
+.inventory-filters select { max-width: 100%; width: 100%; }
+.inventory-table table { table-layout: fixed; }
+.inventory-table th, .inventory-table td { padding: .85rem .8rem; overflow-wrap: anywhere; }
+.inventory-table th:first-child { width: 25%; }
+.inventory-table .institutional-row-link { display: inline-flex; align-items: center; min-height: 2.75rem; white-space: normal; }
+.inventory-form-panel { max-width: 65rem; }
+.inventory-form fieldset { min-width: 0; margin: 0; padding: 1rem 0 0; border: 0; border-top: 1px solid var(--border); }
+.inventory-form legend { padding: 0 .6rem 0 0; font-size: 1.05rem; font-weight: 750; color: var(--forest); }
+.inventory-form fieldset .institutional-help { margin-top: .7rem; }
+.inventory-form .institutional-field input, .inventory-form .institutional-field select { width: 100%; }
+.inventory-reference-form { max-width: 44rem; margin-bottom: 1.5rem; }
+.inventory-reference-form h2 { margin-bottom: 1rem; font-size: 1.15rem; }
+.inventory-reference-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
+.inventory-reference-actions .button { min-height: 2.75rem; padding: .6rem .7rem; }
+.inventory-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.25rem; }
+@media (max-width: 640px) { .inventory-facts { grid-template-columns: 1fr; }.inventory-form .institutional-form-grid { grid-template-columns: 1fr; }.inventory-table .institutional-table td { align-items: start; gap: 1rem; }.inventory-table .institutional-table td:first-child { display: block; text-align: left; }.inventory-table .institutional-table td:first-child::before { display: none; }.inventory-table .institutional-table td:first-child strong, .inventory-table .institutional-table td:first-child small { text-align: left; }.inventory-nav a { flex: 1 0 auto; text-align: center; }.inventory-form .institutional-form-actions { flex-wrap: wrap; } }
+.inventory-nav + .institutional-period-note { margin-bottom: 1rem; }
+@media (max-width: 480px) { .inventory-nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }.inventory-nav a { padding-inline: .4rem; } }
+.inventory-checkbox { display: flex; align-items: center; gap: .75rem; min-height: 2.75rem; font-weight: 650; }
+.inventory-checkbox input { width: 1.2rem; height: 1.2rem; accent-color: var(--forest); flex-shrink: 0; }
+.inventory-balance { display: flex; flex-wrap: wrap; gap: 1.25rem 3rem; padding-bottom: 1.25rem; margin-bottom: .75rem; border-bottom: 1px solid var(--border); }
+.inventory-balance div { display: flex; flex-direction: column; gap: .3rem; }
+.inventory-balance span { color: var(--muted); font-size: .85rem; }
+.inventory-balance strong { color: var(--forest); font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.inventory-movement-form { gap: 1.25rem; }
+.inventory-movement-form fieldset { display: flex; flex-direction: column; gap: 1rem; }
+.inventory-movement-form fieldset:disabled { opacity: .8; }
+.inventory-table td { font-variant-numeric: tabular-nums; }
+.inventory-form-panel textarea { width: 100%; }
+.inventory-expense-options { display: flex; flex-direction: column; gap: 1rem; }
+.inventory-expense-options > .institutional-field { max-width: 24rem; }
+.inventory-expense-choice { display: inline-flex; align-items: center; gap: .6rem; min-height: 2.75rem; cursor: pointer; }
+.inventory-expense-choice input { width: 1.2rem; height: 1.2rem; accent-color: var(--forest); flex-shrink: 0; }
+.inventory-expense-selected { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; margin: 0; padding: 1rem; background: var(--soft); border-radius: .65rem; }
+.inventory-expense-selected dt { color: var(--muted); font-size: .85rem; margin-bottom: .25rem; }
+.inventory-expense-selected dd { margin: 0; overflow-wrap: anywhere; }
+.inventory-linked-expense { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid var(--border); }
+.inventory-linked-expense h3 { font-size: 1.05rem; margin-bottom: .65rem; }
+.inventory-linked-expense p { margin-bottom: .5rem; overflow-wrap: anywhere; }
+.inventory-receipts { margin-top: 1.5rem; }
+@media (max-width: 640px) { .inventory-expense-selected { grid-template-columns: 1fr; }.inventory-expense-options .institutional-table td:last-child { justify-content: flex-end; } }

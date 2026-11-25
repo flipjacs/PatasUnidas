@@ -13,6 +13,21 @@ class Ong extends Model
 
     protected $fillable = ['nome', 'cnpj_cpf', 'email', 'telefone', 'cidade', 'estado', 'status'];
 
+    public function produtosEstoque(): HasMany
+    {
+        return $this->hasMany(InventoryProduct::class, 'ong_id');
+    }
+
+    public function categoriasEstoque(): HasMany
+    {
+        return $this->hasMany(InventoryCategory::class, 'ong_id');
+    }
+
+    public function locaisEstoque(): HasMany
+    {
+        return $this->hasMany(StorageLocation::class, 'ong_id');
+    }
+
     public function usuarios(): HasMany
     {
         return $this->hasMany(Usuario::class, 'ong_id');

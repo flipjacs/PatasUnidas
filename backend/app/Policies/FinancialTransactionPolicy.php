@@ -18,6 +18,11 @@ class FinancialTransactionPolicy
         return $this->viewAny($user);
     }
 
+    public function manageCategory(Usuario $user): bool
+    {
+        return $this->viewAny($user) && $user->perfil === 'administrador';
+    }
+
     public function manage(Usuario $user, FinancialTransaction $transaction): bool
     {
         return $this->viewAny($user) && $user->perfil === 'administrador'

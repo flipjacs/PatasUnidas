@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\FinancialMovementRequest;
 use App\Http\Resources\FinancialTransactionResource;
+use App\Http\Resources\InventoryExpenseResource;
 use App\Models\Donation;
+use App\Models\ExpenseCategory;
 use App\Models\FinancialTransaction;
 use App\Services\FinancialSummaryService;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +31,7 @@ class FinancialController extends Controller
 
     private function details(Builder $query): Builder
     {
-        return $query->with(['registrador:id,nome', 'aprovador:id,nome', 'confirmador:id,nome', 'cancelador:id,nome']);
+        return $query->with(['registrador:id,nome', 'aprovador:id,nome', 'confirmador:id,nome', 'cancelador:id,nome', 'categoriaDespesa:id,nome,ativo']);
     }
 
     private function period(Request $request): array
@@ -56,8 +58,12 @@ class FinancialController extends Controller
     {
         Gate::authorize('create', FinancialTransaction::class);
         $data = $request->validated();
+        $categoryId = $data['categoriaId'] ?? null;
+        unset($data['categoriaId']);
         $transaction = FinancialTransaction::create([
             ...$data,
+            'categoria' => $data['categoria'] ?? 'OUTRA_DESPESA',
+            'categoria_id' => $categoryId,
             'ong_id' => $request->user()->ong_id,
             'registrado_por' => $request->user()->id,
             'status' => 'PENDENTE',
@@ -72,17 +78,35 @@ class FinancialController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $filters = $request->validate([
+            'vinculavelEstoque' => ['sometimes', Rule::in(['1'])],
             'tipo' => ['sometimes', Rule::in(['RECEITA', 'DESPESA'])],
             'status' => ['sometimes', Rule::in(['PENDENTE', 'APROVADA', 'REALIZADA', 'CANCELADA'])],
             'categoria' => ['sometimes', Rule::in(['DOACAO', 'APADRINHAMENTO', 'EVENTO', 'OUTRA_RECEITA', 'ALIMENTACAO', 'MEDICAMENTOS', 'VETERINARIO', 'TRANSPORTE', 'MANUTENCAO', 'OUTRA_DESPESA'])],
+            'categoriaId' => ['sometimes', 'integer'],
+            'semCategoria' => ['sometimes', Rule::in(['1'])],
             'de' => ['sometimes', 'date_format:Y-m-d'],
             'ate' => ['sometimes', 'date_format:Y-m-d', 'after_or_equal:de'],
         ]);
         $query = $this->details($this->dateRange($this->own($request), $filters, 'created_at'));
+        if (isset($filters['categoriaId'])) {
+            $accessible = ExpenseCategory::whereKey($filters['categoriaId'])
+                ->where(fn ($query) => $query->whereNull('ong_id')->orWhere('ong_id', $request->user()->ong_id))->exists();
+            if (! $accessible) {
+                throw ValidationException::withMessages(['categoriaId' => 'Categoria inválida.']);
+            }
+            $query->where('tipo', 'DESPESA')->where('categoria_id', $filters['categoriaId']);
+        }
+        if (isset($filters['semCategoria'])) {
+            $query->where('tipo', 'DESPESA')->whereNull('categoria_id');
+        }
         foreach (['tipo', 'status', 'categoria'] as $field) {
             if (isset($filters[$field])) {
                 $query->where($field, $filters[$field]);
             }
+        }
+
+        if (isset($filters['vinculavelEstoque'])) {
+            return InventoryExpenseResource::collection($query->eligibleForInventory()->select(['id', 'categoria_id', 'descricao', 'valor', 'status', 'created_at'])->withoutEagerLoads()->with('categoriaDespesa:id,nome,ativo')->orderByDesc('created_at')->orderByDesc('id')->paginate(15)->withQueryString());
         }
 
         return FinancialTransactionResource::collection($query->orderByDesc('created_at')->orderByDesc('id')->paginate(15));
@@ -124,7 +148,7 @@ class FinancialController extends Controller
             return $record;
         });
 
-        return new FinancialTransactionResource($transaction->load(['registrador:id,nome', 'aprovador:id,nome', 'confirmador:id,nome', 'cancelador:id,nome']));
+        return new FinancialTransactionResource($transaction->load(['registrador:id,nome', 'aprovador:id,nome', 'confirmador:id,nome', 'cancelador:id,nome', 'categoriaDespesa:id,nome,ativo']));
     }
 
     public function approve(Request $request, int $movimentacao): FinancialTransactionResource

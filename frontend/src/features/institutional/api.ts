@@ -1,6 +1,12 @@
 import { ApiError, apiUrl, initializeCsrf, request } from '../../shared/api/client'
 
 export type Page<T> = { data: T[]; meta: { current_page: number; last_page: number; total: number } }
+export type InventoryCategory = { id: number; nome: string; ativo: boolean; codigo: string | null; global: boolean; gerenciavel: boolean }
+export type InventoryUnit = { id: number; nome: string; codigo: string; sigla: string; fracionavel: boolean }
+export type StorageLocation = { id: number; nome: string; descricao: string | null; ativo: boolean }
+export type InventoryProduct = { id: number; nome: string; marca: string | null; codigoInterno: string | null; descricao: string | null; observacoes: string | null; categoria: InventoryCategory; unidade: InventoryUnit; local: StorageLocation | null; quantidadeMinima: string; quantidadeDisponivel: string; controlaValidade?: boolean; possuiMovimentacoes?: boolean; quantidadeSemLote?: string; lotesDisponiveis?: number; estadoEstoque?: 'ESGOTADO' | 'BAIXO' | 'REGULAR'; ativo: boolean; createdAt: string; updatedAt: string }
+export type InventoryProductInput = { nome: string; categoriaId: number; unidadeId: number; marca?: string | null; codigoInterno?: string | null; descricao?: string | null; observacoes?: string | null; localId?: number | null; quantidadeMinima?: string; controlaValidade?: boolean }
+export type InventoryFilters = { busca?: string; categoriaId?: string; unidadeId?: string; localId?: string; ativo?: string; page?: number }
 export type Species = 'CACHORRO' | 'GATO' | 'OUTRO'
 export type Sex = 'MACHO' | 'FEMEA' | 'NAO_INFORMADO'
 export type Size = 'PEQUENO' | 'MEDIO' | 'GRANDE' | 'NAO_INFORMADO'
@@ -25,8 +31,17 @@ export type Dashboard = {
 }
 
 export type FinancialStatus = 'PENDENTE' | 'APROVADA' | 'REALIZADA' | 'CANCELADA'
-export type FinancialMovement = { id: number; tipo: 'RECEITA' | 'DESPESA'; categoria: string; descricao: string; valor: string; status: FinancialStatus; origem: { tipo: string; id: number | null }; registradoPor: { id: number; nome: string } | null; aprovadoPor: { id: number; nome: string } | null; confirmadoPor: { id: number; nome: string } | null; canceladoPor: { id: number; nome: string } | null; aprovadoEm: string | null; confirmadoEm: string | null; canceladoEm: string | null; createdAt: string }
+export type ExpenseCategory = { id: number; nome: string; codigo: string | null; global: boolean; ativo: boolean; gerenciavel: boolean }
+export type FinancialMovement = { id: number; tipo: 'RECEITA' | 'DESPESA'; categoria: string; categoriaDespesa: Pick<ExpenseCategory, 'id' | 'nome' | 'ativo'> | null; descricao: string; valor: string; status: FinancialStatus; origem: { tipo: string; id: number | null }; registradoPor: { id: number; nome: string } | null; aprovadoPor: { id: number; nome: string } | null; confirmadoPor: { id: number; nome: string } | null; canceladoPor: { id: number; nome: string } | null; aprovadoEm: string | null; confirmadoEm: string | null; canceladoEm: string | null; createdAt: string }
 export type FinancialSummary = { receitasRealizadas: string; despesasRealizadas: string; saldoRealizado: string; receitasPendentes: string; despesasPendentes: string; despesasAprovadas: string }
+export type CategoryExpense = { categoriaId: number | null; nome: string; global: boolean | null; ativo: boolean | null; totalPago: string; quantidade: number }
+export type ExpenseAnalysis = {
+  periodo: { de: string; ate: string }
+  criteriosTemporais: { pago: 'confirmado_em'; pendente: 'created_at'; aprovado: 'aprovado_em' }
+  indicadores: { totalPago: string; quantidadePago: number; totalPendente: string; quantidadePendente: number; totalAprovado: string; quantidadeAprovado: number; quantidadeDespesas: number; totalPagoSemCategoria: string; categoriaMaiorGasto: CategoryExpense | null }
+  categorias: CategoryExpense[]
+  meses: { competencia: string; totalPago: string; totalPendente: string; totalAprovado: string; quantidade: number }[]
+}
 export type InternalDonation = { id: number; ong: { id: number; nome: string }; doador: { id: number; nome: string } | null; valor: string; status: 'PENDENTE' | 'CONFIRMADA' | 'CANCELADA'; mensagem: string | null; confirmadoPor: { id: number; nome: string } | null; canceladoPor: { id: number; nome: string } | null; confirmadoEm: string | null; canceladoEm: string | null; createdAt: string }
 export type InternalSponsorship = { id: number; animal: { id: number; nome: string }; padrinho: { id: number; nome: string; email: string }; modalidade: 'UNICO' | 'MENSAL'; valor: string; status: 'ATIVO' | 'ENCERRADO'; dataInicio: string; dataEncerramento: string | null; motivoEncerramento: string | null; justificativaEncerramento: string | null; proximoVencimento: string | null; createdAt: string }
 export type SponsorshipInstallment = { id: number; numero: number; valor: string; vencimento: string; status: 'PENDENTE' | 'CONFIRMADA' | 'CANCELADA'; vencida: boolean; confirmadoEm: string | null; confirmadoPor?: { id: number; nome: string } | null }
@@ -48,11 +63,31 @@ async function write<T>(path: string, method: 'POST' | 'PATCH' | 'DELETE', body?
   return request<T>(apiUrl(path), { method, ...(body === undefined ? {} : { body }), expectedStatus: method === 'POST' ? 201 : 200 })
 }
 
+export const listInventoryProducts = (filters: InventoryFilters) => page<InventoryProduct>(`/ong/estoque/produtos${query(filters)}`)
+export const getInventoryProduct = (id: number) => request<InventoryProduct>(apiUrl(`/ong/estoque/produtos/${id}`))
+export const createInventoryProduct = (value: InventoryProductInput) => write<InventoryProduct>('/ong/estoque/produtos', 'POST', value)
+export const updateInventoryProduct = (id: number, value: Partial<InventoryProductInput>) => write<InventoryProduct>(`/ong/estoque/produtos/${id}`, 'PATCH', value)
+export const deactivateInventoryProduct = (id: number) => write<InventoryProduct>(`/ong/estoque/produtos/${id}/desativar`, 'PATCH')
+export const listInventoryCategories = async () => (await request<{ data: InventoryCategory[] }>(apiUrl('/ong/estoque/categorias'))).data
+export const createInventoryCategory = (nome: string) => write<InventoryCategory>('/ong/estoque/categorias', 'POST', { nome })
+export const updateInventoryCategory = (id: number, nome: string) => write<InventoryCategory>(`/ong/estoque/categorias/${id}`, 'PATCH', { nome })
+export const deactivateInventoryCategory = (id: number) => write<InventoryCategory>(`/ong/estoque/categorias/${id}/desativar`, 'PATCH')
+export const listInventoryUnits = async () => (await request<{ data: InventoryUnit[] }>(apiUrl('/ong/estoque/unidades'))).data
+export const listStorageLocations = async () => (await request<{ data: StorageLocation[] }>(apiUrl('/ong/estoque/locais'))).data
+export const createStorageLocation = (value: { nome: string; descricao: string | null }) => write<StorageLocation>('/ong/estoque/locais', 'POST', value)
+export const updateStorageLocation = (id: number, value: { nome: string; descricao: string | null }) => write<StorageLocation>(`/ong/estoque/locais/${id}`, 'PATCH', value)
+export const deactivateStorageLocation = (id: number) => write<StorageLocation>(`/ong/estoque/locais/${id}/desativar`, 'PATCH')
+
 export const loadDashboard = (de?: string, ate?: string) => request<Dashboard>(apiUrl(`/ong/dashboard${query({ de, ate })}`))
 export const loadFinancialSummary = (de?: string, ate?: string) => request<FinancialSummary>(apiUrl(`/ong/finance/resumo${query({ de, ate })}`))
+export const loadExpenseAnalysis = (period: { de?: string; ate?: string } = {}) => request<ExpenseAnalysis>(apiUrl(`/ong/relatorios/financeiro/analise-despesas${query(period)}`))
 export const listFinancialMovements = (params: Record<string, string | number | undefined>) => page<FinancialMovement>(`/ong/finance/movimentacoes${query(params)}`)
+export const listExpenseCategories = async () => (await request<{ data: ExpenseCategory[] }>(apiUrl('/ong/finance/categorias-despesa'))).data
+export const createExpenseCategory = (nome: string) => write<ExpenseCategory>('/ong/finance/categorias-despesa', 'POST', { nome })
+export const renameExpenseCategory = (id: number, nome: string) => write<ExpenseCategory>(`/ong/finance/categorias-despesa/${id}`, 'PATCH', { nome })
+export const deactivateExpenseCategory = (id: number) => write<ExpenseCategory>(`/ong/finance/categorias-despesa/${id}/desativar`, 'PATCH')
 export const getFinancialMovement = (id: number) => request<FinancialMovement>(apiUrl(`/ong/finance/movimentacoes/${id}`))
-export const createFinancialMovement = (value: { tipo: 'RECEITA' | 'DESPESA'; categoria: string; descricao: string; valor: string }) => write<FinancialMovement>('/ong/finance/movimentacoes', 'POST', value)
+export const createFinancialMovement = (value: { tipo: 'RECEITA' | 'DESPESA'; categoria?: string; categoriaId?: number; descricao: string; valor: string }) => write<FinancialMovement>('/ong/finance/movimentacoes', 'POST', value)
 export const decideFinancialMovement = (id: number, action: 'aprovar' | 'confirmar-pagamento' | 'confirmar-recebimento' | 'cancelar') => write<FinancialMovement>(`/ong/finance/movimentacoes/${id}/${action}`, 'PATCH')
 export const listInternalDonations = (params: Record<string, string | number | undefined>) => page<InternalDonation>(`/ong/donations${query(params)}`)
 export const getInternalDonation = (id: number) => request<InternalDonation>(apiUrl(`/ong/donations/${id}`))
@@ -101,3 +136,47 @@ export function institutionalError(cause: unknown): string {
   if (cause.status === 429) return 'Muitas tentativas. Aguarde e tente novamente.'
   return 'O servidor não conseguiu concluir a operação. Tente novamente.'
 }
+
+export type InventoryOperation = 'entrada' | 'saida' | 'ajuste'
+export type InventoryMovementType = 'ENTRADA_COMPRA' | 'ENTRADA_DOACAO' | 'ENTRADA_DEVOLUCAO' | 'SAIDA_CONSUMO' | 'SAIDA_PERDA' | 'SAIDA_DESCARTE' | 'AJUSTE_POSITIVO' | 'AJUSTE_NEGATIVO'
+export type InventoryLot = { id: number; produtoId: number; codigo: string; validade: string | null; quantidadeDisponivel: string; vencido: boolean; createdAt: string; produto?: { id: number; nome: string } }
+export type InventoryMovement = { id: number; produto: { id: number; nome: string }; tipo: InventoryMovementType; quantidade: string; unidade: InventoryUnit; saldoAnterior: string; saldoPosterior: string; motivo: string; observacoes: string | null; responsavel: { id: number; nome: string }; lote: InventoryLot | null; despesa?: InventoryExpenseLink | null; chaveOperacao: string; createdAt: string }
+export type InventoryMovementInput = { produtoId: number; tipo: InventoryMovementType; quantidade: string; motivo: string; observacoes?: string | null; chaveOperacao: string; despesaId?: number; loteId?: number; lote?: { codigo: string; validade: string | null } }
+export type InventoryMovementFilters = { despesaId?: string; produtoId?: string; tipo?: string; loteId?: string; responsavelId?: string; de?: string; ate?: string; page?: number }
+export type InventoryAlertType = 'BAIXO' | 'ESGOTADO' | 'VENCIDO' | 'PROXIMO_VENCIMENTO'
+export async function registerInventoryMovement(operation: InventoryOperation, value: InventoryMovementInput) {
+  await initializeCsrf()
+  const routes = { entrada: 'entradas', saida: 'saidas', ajuste: 'ajustes' }
+  return request<InventoryMovement>(apiUrl(`/ong/estoque/${routes[operation]}`), { method: 'POST', body: value })
+}
+export const listInventoryMovements = (filters: InventoryMovementFilters) => page<InventoryMovement>(`/ong/estoque/movimentacoes${query(filters)}`)
+export const getInventoryMovement = (id: number) => request<InventoryMovement>(apiUrl(`/ong/estoque/movimentacoes/${id}`))
+export const listInventoryLots = (productId: number, currentPage = 1) => page<InventoryLot>(`/ong/estoque/produtos/${productId}/lotes${query({ page: currentPage })}`)
+export function listInventoryAlerts(type: 'BAIXO' | 'ESGOTADO', currentPage?: number, days?: number): Promise<Page<InventoryProduct>>
+export function listInventoryAlerts(type: 'VENCIDO' | 'PROXIMO_VENCIMENTO', currentPage?: number, days?: number): Promise<Page<InventoryLot>>
+export function listInventoryAlerts(type: InventoryAlertType, currentPage = 1, days = 30): Promise<Page<InventoryProduct> | Page<InventoryLot>> {
+  return page<InventoryProduct | InventoryLot>(`/ong/estoque/alertas${query({ tipo: type, page: currentPage, ...(type === 'PROXIMO_VENCIMENTO' ? { dias: days } : {}) })}`) as Promise<Page<InventoryProduct> | Page<InventoryLot>>
+}
+
+export type InventoryExpenseLink = { id: number; descricao?: string; status?: FinancialStatus }
+export type InventoryExpense = Pick<FinancialMovement, 'id' | 'descricao' | 'valor' | 'status' | 'categoriaDespesa' | 'createdAt'>
+export const listInventoryExpenses = (filters: { page?: number; status?: FinancialStatus } = {}) => page<InventoryExpense>(`/ong/finance/movimentacoes${query({ vinculavelEstoque: '1', ...filters })}`)
+
+export type InventoryReportFilters = { de?: string; ate?: string; categoriaId?: string; produtoId?: string; unidadeId?: string }
+export type InventoryReportCounts = { totalOperacoes: number; produtosDistintos: number; entradas: number; saidas: number; ajustes: number; porTipo: Record<InventoryMovementType, number> }
+export type InventoryReportUnit = Pick<InventoryUnit, 'id' | 'codigo' | 'sigla'>
+export type InventoryReportCategory = Pick<InventoryCategory, 'id' | 'nome' | 'ativo' | 'global'>
+export type InventoryReport = {
+  periodo: { de: string; ate: string }
+  referencias: { estoqueEm: string; validadeEm: string; proximosDias: number; campoMovimentacao: 'created_at'; fusoHorario: string; classificacao: 'CATEGORIA_ATUAL_DO_PRODUTO' }
+  filtros: { categoriaId: number | null; produtoId: number | null; unidadeId: number | null; limiteRanking: number }
+  catalogo: { total: number; ativos: number; inativos: number; comSaldo: number; esgotados: number; estoqueBaixo: number }
+  movimentacoes: InventoryReportCounts
+  consumoPorCategoria: { categoria: InventoryReportCategory; unidade: InventoryReportUnit; quantidadeConsumida: string; operacoes: number; produtosDistintos: number }[]
+  ranking: { criterio: 'FREQUENCIA_SAIDAS_CONSUMO'; itens: { produtoId: number; nome: string; ativo: boolean; categoria: InventoryReportCategory; unidade: InventoryReportUnit; quantidadeConsumida: string; operacoes: number }[] }
+  meses: (InventoryReportCounts & { competencia: string })[]
+  validade: { lotesVencidos: number; produtosComLotesVencidos: number; lotesProximos: number; produtosComLotesProximos: number; quantidadesPorUnidade: ({ unidade: InventoryReportUnit } & Record<'vencida' | 'proxima' | 'validaAposJanela' | 'semValidade', string>)[] }
+}
+export type InventoryCriticalProduct = { id: number; nome: string; categoria: Pick<InventoryCategory, 'id' | 'nome' | 'ativo'>; unidade: InventoryReportUnit; quantidadeDisponivel: string; quantidadeMinima: string; estadoEstoque: 'ESGOTADO' | 'BAIXO' }
+export const getInventoryReport = (filters: InventoryReportFilters = {}) => request<InventoryReport>(apiUrl(`/ong/estoque/relatorios/resumo${query(filters)}`))
+export const listCriticalInventoryProducts = (filters: Omit<InventoryReportFilters, 'de' | 'ate'> & { page?: number } = {}) => page<InventoryCriticalProduct>(`/ong/estoque/relatorios/produtos-criticos${query(filters)}`)

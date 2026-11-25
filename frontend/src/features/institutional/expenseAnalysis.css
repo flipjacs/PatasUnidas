@@ -1,0 +1,55 @@
+.finance-analysis-entry { margin: 0 0 1.5rem; }
+.expense-period { align-items: end; }
+.expense-period > p { flex-basis: 100%; font-size: .8rem; color: var(--muted); }
+.expense-period > .institutional-field-error { color: var(--error); }
+.expense-period-result { margin: 0 0 1rem; font-size: .9rem; color: var(--muted); }
+.expense-indicators { margin: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+.expense-indicators > div { padding: 1.25rem; border: 1px solid var(--border); border-radius: .8rem; background: var(--paper); min-width: 0; }
+.expense-indicators dt { font-size: .82rem; font-weight: 700; }
+.expense-indicators dd { margin: .6rem 0 .3rem; font-size: 1.7rem; font-weight: 800; color: var(--forest); overflow-wrap: anywhere; }
+.expense-indicators small { color: var(--muted); }
+.expense-indicators .expense-indicator-paid { background: var(--forest); color: #fff; border-color: var(--forest); }
+.expense-indicator-paid dd, .expense-indicator-paid small { color: #fff; }
+.expense-secondary-indicators { display: flex; gap: 1.5rem 3rem; flex-wrap: wrap; margin: 1.5rem 0 2rem; }
+.expense-secondary-indicators > div { min-width: 0; flex: 1 1 16rem; }
+.expense-secondary-indicators dt { color: var(--muted); font-size: .8rem; }
+.expense-secondary-indicators dd { margin: .3rem 0; font-weight: 750; overflow-wrap: anywhere; }
+.expense-secondary-indicators small { color: var(--muted); }
+.expense-charts { display: grid; gap: 1.5rem; }
+.expense-chart-section { min-width: 0; }
+.expense-chart-section h2 { font-size: 1.25rem; letter-spacing: -.02em; }
+.expense-category-bars { list-style: none; margin: 1.2rem 0 0; padding: 0; display: grid; gap: .6rem; }
+.expense-category-bar { position: relative; width: 100%; min-height: 4.5rem; display: grid; gap: .65rem; padding: .7rem .3rem; text-align: left; border: 0; border-radius: .35rem; background: transparent; color: var(--ink); }
+.expense-category-bar-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: .3rem 1rem; font-size: .9rem; }
+.expense-category-bar-heading strong { overflow-wrap: anywhere; }
+.expense-category-bar-heading > span { font-weight: 700; white-space: nowrap; }
+.expense-category-bar small { margin-left: .5rem; color: var(--muted); font-size: .75rem; font-weight: 500; }
+.expense-bar-track { height: .65rem; border-radius: .2rem; background: var(--soft); }
+.expense-bar-track > span { display: block; height: 100%; border-radius: inherit; background: var(--foliage); }
+.expense-category-tooltip { display: none; position: absolute; z-index: 2; left: .4rem; top: 100%; max-width: calc(100% - .8rem); padding: .5rem .75rem; border-radius: .4rem; background: var(--forest); color: white; font-size: .8rem; pointer-events: none; }
+.expense-category-bar:focus .expense-category-tooltip, .expense-category-bar:hover .expense-category-tooltip { display: block; }
+.expense-chart-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; padding: 0; margin: 1.25rem 0 .75rem; list-style: none; font-size: .8rem; }
+.expense-chart-legend li { display: flex; align-items: center; gap: .4rem; }
+.expense-chart-legend span { font-size: 1.1rem; font-weight: 800; }
+.expense-series-paid { color: var(--forest); }
+.expense-series-pending { color: var(--earth-ink); }
+.expense-series-approved { color: #486780; }
+.expense-chart-scroll-help { color: var(--muted); font-size: .78rem; margin-bottom: .5rem; }
+.expense-line-chart { max-width: 100%; overflow-x: auto; padding: .3rem; }
+.expense-line-chart svg { display: block; width: 100%; min-width: 40rem; height: auto; }
+.expense-grid { color: var(--muted); font-size: 12px; }
+.expense-grid line { stroke: var(--border); stroke-width: 1; }
+.expense-grid text, .expense-month-label { fill: var(--muted); }
+.expense-month-label { font-size: 12px; }
+.expense-line-chart rect[role='button'] { cursor: pointer; }
+.expense-line-chart rect[role='button']:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.expense-month-detail { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem 2rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.expense-month-detail dl { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin: 0; }
+.expense-month-detail dt { font-size: .75rem; color: var(--muted); }
+.expense-month-detail dd { margin: .3rem 0 0; font-weight: 750; }
+.expense-data-table { margin-top: 1.5rem; }
+.expense-data-table summary, .expense-criteria summary { cursor: pointer; min-height: 2.75rem; padding: .75rem 0; font-weight: 750; color: var(--forest); }
+.expense-data-table caption { padding: .75rem; text-align: left; font-size: .8rem; color: var(--muted); }
+.expense-criteria { margin-top: 1.5rem; border-top: 1px solid var(--border); }
+.expense-criteria p, .expense-criteria li { font-size: .85rem; color: var(--muted); max-width: 75ch; line-height: 1.7; }
+@media (max-width: 700px) { .expense-indicators { grid-template-columns: 1fr; gap: .75rem; }.expense-indicators dd { font-size: 1.5rem; }.expense-period > .institutional-field { flex: 1 1 100%; }.expense-period > .button { width: 100%; }.expense-month-detail > div { width: 100%; }.expense-data-table .institutional-table th[scope='row'] { display: block; text-align: left; padding: .8rem; }.expense-line-chart svg { min-height: 0; } }

@@ -1,5 +1,5 @@
 import { beforeEach, expect, it, vi } from 'vitest'
-import { closeInternalSponsorship, createFinancialMovement, decideFinancialMovement, confirmInternalInstallment, listFinancialMovements, loadFinancialSummary } from './api'
+import { closeInternalSponsorship, createFinancialMovement, decideFinancialMovement, confirmInternalInstallment, listFinancialMovements, loadFinancialSummary, loadExpenseAnalysis } from './api'
 const fetchMock = vi.fn<typeof fetch>()
 const reply = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status })
 beforeEach(() => { vi.stubGlobal('fetch', fetchMock); fetchMock.mockReset(); document.cookie = 'XSRF-TOKEN=test' })
@@ -8,6 +8,12 @@ it('usa resumo do servidor e pagina o histórico', async () => {
   expect((await loadFinancialSummary()).saldoRealizado).toBe('85.65')
   await listFinancialMovements({ page: 2, tipo: 'DESPESA' })
   expect(fetchMock.mock.calls[1][0]).toContain('page=2&tipo=DESPESA')
+})
+it('consulta análise com datas civis e cookies pelo cliente existente', async () => {
+  fetchMock.mockResolvedValueOnce(reply({ periodo: { de: '2026-11-17', ate: '2026-11-18' } }))
+  await loadExpenseAnalysis({ de: '2026-11-17', ate: '2026-11-18' })
+  expect(fetchMock.mock.calls[0][0]).toContain('/ong/relatorios/financeiro/analise-despesas?de=2026-11-17&ate=2026-11-18')
+  expect(fetchMock.mock.calls[0][1]).toEqual(expect.objectContaining({ credentials: 'include', method: 'GET' }))
 })
 it('cria apenas lançamento manual pendente sem campos institucionais', async () => {
   fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 })).mockResolvedValueOnce(reply({ status: 'PENDENTE' }, 201))

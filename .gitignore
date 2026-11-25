@@ -11,3 +11,7 @@
 .DS_Store
 artifacts/f10/screenshots/
 artifacts/f10/test-results/
+.playwright-mcp/
+artifacts/frontend-qa/
+**/__pycache__/
+**/.pytest_cache/

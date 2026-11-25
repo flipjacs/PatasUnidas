@@ -15,6 +15,11 @@ class FinancialTransactionResource extends JsonResource
             'id' => $this->id,
             'tipo' => $this->tipo,
             'categoria' => $this->categoria,
+            'categoriaDespesa' => $this->whenLoaded('categoriaDespesa', fn (): ?array => $this->categoriaDespesa ? [
+                'id' => $this->categoriaDespesa->id,
+                'nome' => $this->categoriaDespesa->nome,
+                'ativo' => $this->categoriaDespesa->ativo,
+            ] : null),
             'descricao' => $this->descricao,
             'valor' => $this->valor,
             'status' => $this->status,

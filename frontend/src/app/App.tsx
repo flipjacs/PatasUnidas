@@ -33,7 +33,17 @@ const MedicalCreate = lazy(async () => ({ default: (await import('../features/in
 const MedicalDetails = lazy(async () => ({ default: (await import('../features/institutional/MedicalRecords')).MedicalDetails }))
 const MedicalCorrect = lazy(async () => ({ default: (await import('../features/institutional/MedicalRecords')).MedicalCorrect }))
 const MedicalCorrections = lazy(async () => ({ default: (await import('../features/institutional/MedicalRecords')).MedicalCorrections }))
+const InventoryMovementEditor = lazy(async () => ({ default: (await import('../features/institutional/InventoryMovementForm')).InventoryMovementEditor }))
+const InventoryHistory = lazy(async () => ({ default: (await import('../features/institutional/InventoryHistory')).InventoryHistory }))
+const InventoryMovementDetails = lazy(async () => ({ default: (await import('../features/institutional/InventoryHistory')).InventoryMovementDetails }))
+const InventoryAlerts = lazy(async () => ({ default: (await import('../features/institutional/InventoryAlerts')).InventoryAlerts }))
+const InventoryReports = lazy(async () => ({ default: (await import('../features/institutional/InventoryReports')).InventoryReports }))
+const InventoryList = lazy(async () => ({ default: (await import('../features/institutional/Inventory')).InventoryList }))
+const InventoryDetails = lazy(async () => ({ default: (await import('../features/institutional/Inventory')).InventoryDetails }))
+const InventoryEditor = lazy(async () => ({ default: (await import('../features/institutional/InventoryForm')).InventoryEditor }))
+const InventoryReferences = lazy(async () => ({ default: (await import('../features/institutional/InventoryReferences')).InventoryReferences }))
 const FinanceOverview = lazy(async () => ({ default: (await import('../features/institutional/Finance')).FinanceOverview }))
+const ExpenseAnalysisPanel = lazy(async () => ({ default: (await import('../features/institutional/ExpenseAnalysisPanel')).ExpenseAnalysisPanel }))
 const FinanceCreate = lazy(async () => ({ default: (await import('../features/institutional/Finance')).FinanceCreate }))
 const FinanceDetails = lazy(async () => ({ default: (await import('../features/institutional/Finance')).FinanceDetails }))
 const InternalDonations = lazy(async () => ({ default: (await import('../features/institutional/FinancialRelations')).DonationList }))
@@ -91,8 +101,21 @@ function AppRoutes() {
       <Route path="funcionarios/:id/editar" element={<Protected allowed={['ADMINISTRADOR']}><InstitutionalEmployeeEdit /></Protected>} />
       <Route path="adocoes" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InstitutionalAdoptionList /></Protected>} />
       <Route path="adocoes/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InstitutionalAdoptionDetails /></Protected>} />
+      <Route path="estoque" element={<InventoryList />} />
+      <Route path="estoque/movimentacoes" element={<InventoryHistory />} />
+      <Route path="estoque/movimentacoes/:movementId" element={<InventoryMovementDetails />} />
+      <Route path="estoque/alertas" element={<InventoryAlerts />} />
+      <Route path="estoque/relatorios" element={<InventoryReports />} />
+      <Route path="estoque/:id/movimentar/:operation" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InventoryMovementEditor /></Protected>} />
+      <Route path="estoque/novo" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InventoryEditor /></Protected>} />
+      <Route path="estoque/:id" element={<InventoryDetails />} />
+      <Route path="estoque/:id/editar" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InventoryEditor /></Protected>} />
+      <Route path="estoque/categorias" element={<InventoryReferences key="categorias" kind="categorias" />} />
+      <Route path="estoque/locais" element={<InventoryReferences key="locais" kind="locais" />} />
+      <Route path="estoque/unidades" element={<InventoryReferences key="unidades" kind="unidades" />} />
       <Route path="financeiro" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><FinanceOverview /></Protected>} />
       <Route path="financeiro/novo" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><FinanceCreate /></Protected>} />
+      <Route path="financeiro/analise" element={<Protected allowed={['ADMINISTRADOR']}><ExpenseAnalysisPanel /></Protected>} />
       <Route path="financeiro/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><FinanceDetails /></Protected>} />
       <Route path="doacoes" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InternalDonations /></Protected>} />
       <Route path="doacoes/:id" element={<Protected allowed={['ADMINISTRADOR', 'VOLUNTARIO']}><InternalDonationDetails /></Protected>} />
