@@ -1,4 +1,4 @@
-const apiBase = (import.meta.env.VITE_API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8001/api/v1`).replace(/\/+$/, '')
+const apiBase = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? `${window.location.protocol}//${window.location.hostname}:8001/api/v1` : `${window.location.origin}/api/v1`)).replace(/\/+$/, '')
 const backendOrigin = new URL(apiBase, window.location.origin).origin
 
 export class ApiError extends Error {
